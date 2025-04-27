@@ -1,0 +1,49 @@
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap; /* <-- позволяем перенос строк */
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  word-break: break-word; /* Чтобы длинные слова переносились */
+}
+
+.name {
+  font-weight: 500;
+  max-width: 70%; /* Ограничиваем ширину имени */
+}
+
+.separator {
+  color: #999;
+}
+
+.value {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+
+.dimension {
+  margin-left: 4px;
+  font-size: 14px;
+  color: #666;
+}

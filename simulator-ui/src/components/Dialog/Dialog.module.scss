@@ -1,0 +1,71 @@
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.dialog {
+  border: none;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  animation: fade-in 0.2s ease-out; /* <-- вот она! */
+}
+
+
+::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Типы диалогов */
+.info {
+  border-top: 5px solid #007bff;
+}
+
+.warning {
+  border-top: 5px solid #ffc107;
+}
+
+.error {
+  border-top: 5px solid #dc3545;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.body {
+  font-size: 16px;
+}
+
+.text {
+  margin-bottom: 10px;
+}
