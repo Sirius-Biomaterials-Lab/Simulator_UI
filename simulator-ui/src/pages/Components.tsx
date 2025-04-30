@@ -3,6 +3,7 @@ import {Dropdown} from "../components/Dropdown/Dropdown.tsx";
 import {Button} from "../components/Button/Button.tsx";
 import {ValueList} from "../components/ValueList/ValueList.tsx";
 import {Dialog} from "../components/Dialog/Dialog.tsx";
+import {Chart} from "../components/Chart/Chart.tsx";
 
 export function Components() {
 
@@ -22,6 +23,28 @@ export function Components() {
         { name: "params2", value: 0.0 },
         { name: "Max relative error", value: 1.00, dimension: "%" },
     ];
+
+    const data = {
+        name: "Stress vs Strain",
+        x_label: "Strain",
+        y_label: "Stress (MPa)",
+        lines: [
+            {
+                name: "Simulation",
+                data: {
+                    x: [0, 0.1, 0.2, 0.3],
+                    y: [0, 2, 3, 4],
+                },
+            },
+            {
+                name: "Experiment",
+                data: {
+                    x: [0, 0.1, 0.2, 0.3],
+                    y: [0, 1.8, 2.9, 3.9],
+                },
+            },
+        ],
+    };
 
     return (
         <>
@@ -50,6 +73,8 @@ export function Components() {
 
                 </Dialog>
             )}
+
+            <Chart {...data} />
 
 
         </>
