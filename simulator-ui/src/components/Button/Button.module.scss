@@ -1,0 +1,42 @@
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Варианты кнопок */
+.primary {
+  background-color: #007bff;
+  color: white;
+
+  &:hover {
+    background-color: #0069d9;
+  }
+
+  &:disabled {
+    background-color: #a1c5f4;
+    cursor: not-allowed;
+  }
+}
+
+.secondary {
+  background-color: #6c757d;
+  color: white;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+
+  &:disabled {
+    background-color: #c8cbcf;
+    cursor: not-allowed;
+  }
+}
+
+/* Активное состояние */
+.active {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
