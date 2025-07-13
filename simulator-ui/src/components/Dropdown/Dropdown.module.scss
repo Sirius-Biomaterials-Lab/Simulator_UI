@@ -1,8 +1,54 @@
-.dropdown {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+
+.wrapper {
+  position: relative;
+  max-width: 320px;         /*  stretch as needed  */
+  width: 100%;
+}
+
+.select {
+  /* Basic look */
+  width: 100%;
+  padding: 10px 16px;
+  padding-right: 44px;      /* room for arrow   */
   font-size: 16px;
-  background-color: white;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #c3c3c3;
+  border-radius: 8px;
+  outline: none;
   cursor: pointer;
+
+  /* Remove default arrow */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Custom arrow */
+  background-image: url("data:image/svg+xml,%3Csvg width='14' height='8' viewBox='0 0 14 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23999' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 14px 8px;
+
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.select:hover {
+  background-color: #fff;
+  border-color: #888;
+}
+
+.select:focus {
+  border-color: #0066d1;
+  box-shadow: 0 0 0 4px rgba(0, 102, 209, 0.25);
+}
+
+.select:disabled {
+  color: #6c757d;
+  background: #e9ecef;
+  cursor: not-allowed;
+}
+
+.select option {
+  padding: 10px 12px;
+  font-size: 16px;
 }

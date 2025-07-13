@@ -1,3 +1,9 @@
+import {Isotropic} from "../components/Isotropic/Isotropic.tsx";
+
 export function Models() {
-    return <h1>Модели</h1>;
+    return (
+        <div style={{marginTop: "30px"}}>
+        <h1>Модели</h1>
+        <Isotropic />
+    </div>);
 }

@@ -5,6 +5,8 @@ import { Grid } from "./pages/Grid";
 import { Simulator } from "./pages/Simulator";
 import { BurgerMenu } from "./components/BurgerMenu/BurgerMenu";
 import {Components} from "./pages/Components.tsx";
+import { useEffect } from "react";
+import { Api } from "./api/api.ts";
 
 const menuItems = [
     { path: "/", label: "Главная" },
@@ -15,6 +17,7 @@ const menuItems = [
 ];
 
 function App() {
+
     return (
         <BrowserRouter>
             <BurgerMenu items={menuItems} />
