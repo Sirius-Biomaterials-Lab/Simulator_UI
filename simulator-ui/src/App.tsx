@@ -4,7 +4,6 @@ import { Grid } from "./pages/Grid";
 import { Simulator } from "./pages/Simulator";
 import {BurgerMenu, MenuItem} from "./components/BurgerMenu/BurgerMenu";
 import {Components} from "./pages/Components.tsx";
-import { Api } from "./api/api.ts";
 import {Isotropic} from "./components/Isotropic/Isotropic.tsx";
 import {Anisotropic} from "./components/Anisotropic/Anisotropic.tsx";
 

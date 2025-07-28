@@ -6,7 +6,6 @@ import { Dropdown } from "../Dropdown/Dropdown";
 import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
-import { Api } from "../../api/api";
 import {ValueList} from "../ValueList/ValueList.tsx";
 
 export const Isotropic = observer(() => {
@@ -30,10 +29,7 @@ export const Isotropic = observer(() => {
         { value: "Gent", label: "Гент" },
         { value: "Carroll", label: "Кэррол" },
     ];
-    // const errorOptions = [
-    //     { value: "Квадратичная ошибка", label: "Квадратичная ошибка" },
-    //     { value: "Абсолютная ошибка", label: "Абсолютная ошибка" },
-    // ];
+
 
     // drag&drop
     const onDropFit = useCallback((e: React.DragEvent<HTMLDivElement>) => {

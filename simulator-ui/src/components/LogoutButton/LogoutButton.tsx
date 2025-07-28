@@ -1,5 +1,3 @@
-import styles from "./LoginButton.module.scss";
-import {Api} from "../../api/api.ts";
 import {Button} from "../Button/Button.tsx";
 import {api} from "../../api/apiWrapper.ts";
 

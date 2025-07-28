@@ -1,4 +1,3 @@
-import {Isotropic} from "../components/Isotropic/Isotropic.tsx";
 import {Anisotropic} from "../components/Anisotropic/Anisotropic.tsx";
 
 export function Models() {
