@@ -1,0 +1,41 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.formRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  label {
+    width: 160px;
+    font-weight: 500;
+  }
+}
+.dropzone {
+  border: 2px dashed #999;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  input[type="file"] {
+    display: inline-block;
+  }
+}
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.loading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.error {
+  color: #dc3545;
+  margin-bottom: 12px;
+}

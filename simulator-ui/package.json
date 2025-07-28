@@ -2,6 +2,7 @@
   "name": "simulator-ui",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://artiebears13.github.io/Simulator_UI",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "create-component": "node scripts/create-component.cjs",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "generate:api": "swagger-typescript-api generate -p ./src/api/swagger.json -o ./src/api -n api.ts --formData-multiple-files"
   },
   "dependencies": {

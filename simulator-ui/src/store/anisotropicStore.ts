@@ -3,20 +3,20 @@ import {
     BodyUploadModelModulesIsotropicUploadModelPost,
     PlotData,
     AnisotropicMetric,           // ← метрики из сгенерённого клиента
+    BodyUploadModelModulesAnisotropicUploadModelPost,
 } from "../api/api";
 import {api} from "../api/apiWrapper.ts";
 
 
 export type HyperlasticModelType =
-    BodyUploadModelModulesIsotropicUploadModelPost["hyperlastic_model"];
-export type ErrorFunctionType =
-    BodyUploadModelModulesIsotropicUploadModelPost["error_function"];
+    BodyUploadModelModulesAnisotropicUploadModelPost["model_type"];
 
-export class IsotropicStore {
+export class AnisotropicStore {
     /* ───────── form fields ───────── */
-    hyperlastic_model: HyperlasticModelType = "MooneyRivlin";
-    error_function: ErrorFunctionType = "Absolute error in σ";
-    fitFiles: File[] = [];
+    hyperlastic_model: HyperlasticModelType = "GOH";
+    alpha: string | null = null;
+    kappa: string | null = null;
+    fitFile: File | null = null;
     predictFiles?: File = undefined;
 
     /* ───────── responses ───────── */
@@ -38,13 +38,12 @@ export class IsotropicStore {
         this.hyperlastic_model = model;
     }
 
-    setErrorFunction(fn: ErrorFunctionType) {
-        this.error_function = fn;
-    }
+   // hyperlastic_model setErrorFunction(fn: ErrorFunctionType) {
+   //      this.error_function = fn;
+   //  }
 
-    setFitFiles(files: File[]) {
-        this.fitFiles = files;
-        console.log(files);
+    setFitFile(file: File) {
+        this.fitFile = file;
     }
 
     setPredictFile(file: File) {
@@ -53,7 +52,7 @@ export class IsotropicStore {
 
     /* ===== actions ===== */
     async uploadAndFit() {
-        if (!this.fitFiles.length) {
+        if (!this.fitFile) {
             this.error = "Требуется хотя бы один файл.";
             return;
         }
@@ -64,12 +63,16 @@ export class IsotropicStore {
         try {
             /* 1. Собираем FormData */
             const fd = new FormData();
-            fd.append("hyperlastic_model", this.hyperlastic_model);
-            this.fitFiles.forEach(f => fd.append("files", f, f.name));
+            fd.append("model_type", this.hyperlastic_model);
+            this.alpha && fd.append("alpha", this.alpha);
+            this.kappa && fd.append("kappa", this.kappa);
+            if (!this.fitFile) return
+            fd.append("files", this.fitFile, this.fitFile.name);
+
 
             /* 2. POST /upload_model вручную */
             const uploadResp = await fetch(
-                `${api.baseUrl}/modules/isotropic/upload_model`,
+                `${api.baseUrl}/modules/anisotropic/upload_model`,
                 { method: "POST", body: fd, credentials: "include" }
             );
 
@@ -79,7 +82,7 @@ export class IsotropicStore {
             }
 
             /* 3. Фитим модель через клиент (возвращает {status, parameters, metrics, plot_data}) */
-            const fit = await api.modules.fitModelModulesIsotropicFitPost();
+            const fit = await api.modules.fitModelModulesAnisotropicFitPost();
 
             runInAction(() => {
                 this.fitPlotData = fit.data.plot_data ?? null;
@@ -108,12 +111,12 @@ export class IsotropicStore {
 
         try {
             const fd = new FormData();
-            if (!this.predictFiles) return
-            fd.append("file", this.predictFiles, this.predictFiles.name);
+            if (!this.fitFile) return
+            fd.append("file", this.fitFile, this.fitFile.name)
 
             /* POST /predict вручную */
             const resp = await fetch(
-                `${api.baseUrl}/modules/isotropic/predict`,
+                `${api.baseUrl}/modules/anisotropic/predict`,
                 { method: "POST", body: fd, credentials: "include" }
             );
 
@@ -145,12 +148,10 @@ export class IsotropicStore {
             // 1. Запрашиваем строку энергии
             // const resp   = await api.modules.calculateEnergyModulesIsotropicCalculateEnergyGet();
             const resp   = await fetch(
-                `${api.baseUrl}/modules/isotropic/calculate_energy`,
-                // `${api.baseUrl}/metrics`,
+                `${api.baseUrl}/modules/anisotropic/calculate_energy`,
                 // `${api.baseUrl}/modules/isotropic/clear_data`,
                 { method: "POST", credentials: "include" }
             );
-            // console.log(await resp.text());
             const energy = await resp.text();               // тип — string
 
             // 2. Формируем файл
@@ -182,7 +183,7 @@ export class IsotropicStore {
     reset() {
         this.hyperlastic_model = "MooneyRivlin";
         this.error_function = "Absolute error in σ";
-        this.fitFiles = [];
+        this.fitFile = null;
         this.fitPlotData = null;
         this.predictPlotData = null;
         this.fitMetrics = null;
@@ -191,4 +192,4 @@ export class IsotropicStore {
     }
 }
 
-export const isotropicStore = new IsotropicStore();
+export const anisotropicStore = new AnisotropicStore();

@@ -9,6 +9,9 @@ import {
 } from "recharts";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Chart.module.scss";
+import {Button} from "../Button/Button.tsx";
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
 interface ChartProps {
     name: string;
@@ -25,6 +28,7 @@ interface ChartProps {
 
 export function Chart({ name, x_label, y_label, lines }: ChartProps) {
     // ==== Подготовка данных ====
+    const [fullscreen, setFullscreen] = useState(false);
     const chartData: Record<string, number>[] = [];
     const maxLength = Math.max(...lines.map((l) => l.data.x.length));
     for (let i = 0; i < maxLength; i++) {
@@ -106,6 +110,25 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
         };
     }, []);
 
+    useEffect(() => {
+        const container = containerRef.current;
+        const legend    = legendRef.current;
+        if (!container || !legend) return;
+
+        const { width: cw, height: ch } = container.getBoundingClientRect();
+        const { width: lw,  height: lh } = legend.getBoundingClientRect();
+
+        // если выходим за пределы — сдвигаем
+        const newX = Math.min(legendPos.x, cw - lw);
+        const newY = Math.min(legendPos.y, ch - lh);
+        if (newX !== legendPos.x || newY !== legendPos.y) {
+            const pos = { x: Math.max(0, newX), y: Math.max(0, newY) };
+            setLegendPos(pos);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+        }
+    }, [fullscreen, legendPos.x, legendPos.y]);       // ← срабатывает при смене режима
+
+
     // ==== Формируем данные легенды ====
     const legendData = lines.map((line, index) => ({
         value: line.name,
@@ -157,12 +180,16 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
     // ==== Render ====
     return (
         <div
-            className={styles.container}
+            className={!fullscreen ? styles.container : styles.fullScreenContainer}
             ref={containerRef}
-            style={{ position: "relative", overflow: "visible" }}
+            style={{ overflow: "visible" }}
         >
+            <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
             <h2 className={styles.title}>{name}</h2>
-            <ResponsiveContainer width="100%" height={300}>
+                <button className={styles.fullScreenButton} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <CloseFullscreenIcon /> : <OpenInFullIcon />}</button>
+            </div>
+
+            <ResponsiveContainer width="100%" height={fullscreen? '100%':500}>
                 <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
@@ -186,6 +213,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
             </ResponsiveContainer>
             {/* Легенда (рядышком поверх графика) */}
             <CustomLegend />
+
         </div>
     );
 }
