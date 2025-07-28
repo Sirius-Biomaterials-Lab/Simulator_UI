@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "swagger-typescript-api": "^13.1.3"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}
