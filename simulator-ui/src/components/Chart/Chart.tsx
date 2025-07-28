@@ -9,7 +9,6 @@ import {
 } from "recharts";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Chart.module.scss";
-import {Button} from "../Button/Button.tsx";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 

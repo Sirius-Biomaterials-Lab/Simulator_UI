@@ -6,7 +6,6 @@ import { Dropdown } from "../Dropdown/Dropdown";
 import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
-import { Api } from "../../api/api";
 import {ValueList} from "../ValueList/ValueList.tsx";
 
 export const Anisotropic = observer(() => {

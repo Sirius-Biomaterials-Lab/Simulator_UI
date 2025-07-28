@@ -8,7 +8,7 @@ interface Item {
 
 interface ValueListProps {
     title?: string;
-    items: Item[];
+    items: Item[] | null;
 }
 
 export function ValueList({ title, items }: ValueListProps) {

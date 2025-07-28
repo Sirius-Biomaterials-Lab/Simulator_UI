@@ -9,13 +9,11 @@ import {api} from "../api/apiWrapper.ts";
 
 export type HyperlasticModelType =
     BodyUploadModelModulesIsotropicUploadModelPost["hyperlastic_model"];
-export type ErrorFunctionType =
-    BodyUploadModelModulesIsotropicUploadModelPost["error_function"];
 
 export class IsotropicStore {
     /* ───────── form fields ───────── */
     hyperlastic_model: HyperlasticModelType = "MooneyRivlin";
-    error_function: ErrorFunctionType = "Absolute error in σ";
+    // error_function: ErrorFunctionType = "Absolute error in σ";
     fitFiles: File[] = [];
     predictFiles?: File = undefined;
 
@@ -38,9 +36,9 @@ export class IsotropicStore {
         this.hyperlastic_model = model;
     }
 
-    setErrorFunction(fn: ErrorFunctionType) {
-        this.error_function = fn;
-    }
+    // setErrorFunction(fn: ErrorFunctionType) {
+    //     this.error_function = fn;
+    // }
 
     setFitFiles(files: File[]) {
         this.fitFiles = files;
@@ -181,7 +179,7 @@ export class IsotropicStore {
 
     reset() {
         this.hyperlastic_model = "MooneyRivlin";
-        this.error_function = "Absolute error in σ";
+        // this.error_function = "Absolute error in σ";
         this.fitFiles = [];
         this.fitPlotData = null;
         this.predictPlotData = null;

@@ -1,6 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import {
-    BodyUploadModelModulesIsotropicUploadModelPost,
     PlotData,
     AnisotropicMetric,           // ← метрики из сгенерённого клиента
     BodyUploadModelModulesAnisotropicUploadModelPost,
@@ -181,8 +180,7 @@ export class AnisotropicStore {
     }
 
     reset() {
-        this.hyperlastic_model = "MooneyRivlin";
-        this.error_function = "Absolute error in σ";
+        this.hyperlastic_model = "GOH";
         this.fitFile = null;
         this.fitPlotData = null;
         this.predictPlotData = null;
