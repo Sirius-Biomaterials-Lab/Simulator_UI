@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import {
     BodyUploadModelModulesIsotropicUploadModelPost,
     PlotData,
-    AnisotropicMetric,           // ← метрики из сгенерённого клиента
+    AnisotropicMetric, Metric,           // ← метрики из сгенерённого клиента
 } from "../api/api";
 import {api} from "../api/apiWrapper.ts";
 
@@ -20,7 +20,7 @@ export class IsotropicStore {
     /* ───────── responses ───────── */
     fitPlotData: PlotData | null = null;
     predictPlotData: PlotData | null = null;
-    fitMetrics: AnisotropicMetric[] | null = null;
+    fitMetrics: Metric[] | null = null;
     predictMetrics: AnisotropicMetric[] | null = null;
 
     /* ───────── state ───────── */

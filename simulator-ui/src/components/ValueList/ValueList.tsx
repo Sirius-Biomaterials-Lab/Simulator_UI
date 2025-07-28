@@ -1,8 +1,8 @@
 import styles from "./ValueList.module.scss";
 
 interface Item {
-    name: string;
-    value: number;
+    name?: string;
+    value?: number | null;
     dimension?: string;
 }
 
@@ -16,7 +16,7 @@ export function ValueList({ title, items }: ValueListProps) {
         <div className={styles.container}>
             {title && <h2 className={styles.title}>{title}</h2>}
             <ul className={styles.list}>
-                {items.map((item, index) => (
+                {items?.map((item, index) => (
                     <li key={index} className={styles.item}>
                         <span className={styles.name}>{item.name}</span>
                         <span className={styles.separator}>:</span>

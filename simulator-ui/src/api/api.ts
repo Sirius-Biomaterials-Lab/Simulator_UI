@@ -49,7 +49,7 @@ export interface AnisotropicMetric {
    * Value
    * Metric value
    */
-  value: number;
+  value: number | null;
 }
 
 /**
@@ -403,7 +403,7 @@ export class HttpClient<SecurityDataType = unknown> {
     fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
-    credentials: "include",
+    credentials: "same-origin",
     headers: {},
     redirect: "follow",
     referrerPolicy: "no-referrer",
@@ -610,7 +610,6 @@ export class Api<
         method: "POST",
         secure: true,
         format: "json",
-        credentials: "include",
         ...params,
       }),
 
@@ -649,7 +648,6 @@ export class Api<
         body: data,
         type: ContentType.FormData,
         format: "json",
-        credentials: "include",
         ...params,
       }),
 
@@ -712,16 +710,16 @@ export class Api<
      * No description
      *
      * @tags isotropic
-     * @name CalculateEnergyModulesIsotropicCalculateEnergyGet
+     * @name CalculateEnergyModulesIsotropicCalculateEnergyPost
      * @summary Calculate Energy
-     * @request GET:/modules/isotropic/calculate_energy
+     * @request POST:/modules/isotropic/calculate_energy
      */
-    calculateEnergyModulesIsotropicCalculateEnergyGet: (
+    calculateEnergyModulesIsotropicCalculateEnergyPost: (
       params: RequestParams = {},
     ) =>
-      this.request<string, IsotropicResponse | HTTPValidationError>({
+      this.request<string, HTTPValidationError>({
         path: `/modules/isotropic/calculate_energy`,
-        method: "GET",
+        method: "POST",
         ...params,
       }),
 
@@ -846,6 +844,7 @@ export class Api<
     /**
      * @description Endpoint that serves Prometheus metrics.
      *
+     * @tags monitoring
      * @name MetricsMetricsGet
      * @summary Metrics
      * @request GET:/metrics
