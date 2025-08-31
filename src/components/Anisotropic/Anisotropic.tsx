@@ -90,7 +90,7 @@ export const Anisotropic = observer(() => {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Аниызотропная модель</h1>
+            <h1 className={styles.title}>Анизотропная модель</h1>
 
             <div className={styles.formRow}>
                 <label>Hyperlastic Model:</label>
