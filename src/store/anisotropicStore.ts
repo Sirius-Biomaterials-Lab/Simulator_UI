@@ -81,7 +81,7 @@ export class AnisotropicStore {
             }
 
             /* 3. Фитим модель через клиент (возвращает {status, parameters, metrics, plot_data}) */
-            const fit = await api.modules.fitModelModulesAnisotropicFitPost();
+            const fit = await api.modules.fitModelModulesAnisotropicFitPost({credentials: "include"});
 
             runInAction(() => {
                 this.fitPlotData = fit.data.plot_data ?? null;

@@ -1,13 +1,29 @@
-import {Button} from "../Button/Button.tsx";
-import {api} from "../../api/apiWrapper.ts";
+import { Button } from "../Button/Button";
+import { api } from "../../api/apiWrapper";
 
 export function LoginButton() {
+    const login = async () => {
+        const username = prompt("Введите логин:");
+        const password = prompt("Введите пароль:");
 
-    const login =async  () => {
-        await api.auth.loginCookieAuthLoginCookiePost({}).then()
-    }
+        if (!username || !password) {
+            alert("Логин и пароль обязательны");
+            return;
+        }
 
-    return (
-       <Button text={"Войти"} onClick={login}/>
-    );
+        const basic = btoa(`${username}:${password}`);
+
+        try {
+            await api.auth.loginCookieAuthLoginCookiePost({
+                headers: { Authorization: `Basic ${basic}` },
+                credentials: "include", // важно для кук
+            });
+            alert(`Добро пожаловать, ${username}`);
+        } catch (e) {
+            console.error(e);
+            alert("Ошибка входа");
+        }
+    };
+
+    return <Button text="Войти" onClick={login} />;
 }

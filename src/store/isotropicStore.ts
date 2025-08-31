@@ -77,7 +77,7 @@ export class IsotropicStore {
             }
 
             /* 3. Фитим модель через клиент (возвращает {status, parameters, metrics, plot_data}) */
-            const fit = await api.modules.fitModelModulesIsotropicFitPost();
+            const fit = await api.modules.fitModelModulesIsotropicFitPost({credentials: "include"});
 
             runInAction(() => {
                 this.fitPlotData = fit.data.plot_data ?? null;
