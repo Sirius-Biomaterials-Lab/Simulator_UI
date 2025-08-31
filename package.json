@@ -2,7 +2,7 @@
   "name": "simulator-ui",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://artiebears13.github.io/Simulator_UI",
+  "homepage": "https://sirius-biomaterials-lab.github.io/Simulator_UI",
   "type": "module",
   "scripts": {
     "dev": "vite",
