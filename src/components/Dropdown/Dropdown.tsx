@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Dropdown.module.scss";
 
 export interface Option {

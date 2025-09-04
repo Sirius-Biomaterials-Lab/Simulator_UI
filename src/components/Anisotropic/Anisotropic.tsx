@@ -7,7 +7,6 @@ import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
 import {ValueList} from "../ValueList/ValueList.tsx";
-import {isotropicStore} from "../../store/isotropicStore.ts";
 
 export const Anisotropic = observer(() => {
     // локальные флаги открытия диалогов

@@ -126,7 +126,7 @@ export class AnisotropicStore {
             runInAction(() => {
                 this.predictPlotData = data.plot_data ?? null;
                 this.predictMetrics = data.metrics ?? null;
-                this.fit = data.metrics ?? null;
+                // this.fit = data.metrics ?? null;
             });
         } catch (e: any) {
             runInAction(() => {

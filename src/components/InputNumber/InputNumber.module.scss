@@ -1,0 +1,67 @@
+/* InputNumber.module.scss */
+.wrapper {
+  position: relative;
+  //max-width: 320px; /* растягивается при необходимости */
+  width: 100%;
+}
+
+.input {
+  /* Базовый вид */
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 16px;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #c3c3c3;
+  border-radius: 8px;
+  outline: none;
+  cursor: text;
+
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+
+  /* Чтоб не прыгала высота при разных шрифтах */
+  line-height: 1.5;
+
+  /* На всякий — отключим спиннеры для type=number, если вдруг решишь использовать */
+  /* но у нас input="text", так что это просто про запас */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.input:hover {
+  background-color: #fff;
+  border-color: #888;
+}
+
+.input:focus {
+  border-color: #0066d1;
+  box-shadow: 0 0 0 4px rgba(0, 102, 209, 0.25);
+}
+
+.input:disabled {
+  color: #6c757d;
+  background: #e9ecef;
+  cursor: not-allowed;
+}
+
+.input::placeholder {
+  color: #9aa0a6;
+}
+
+/* Доп. состояния (можешь навешивать классом) */
+.invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.2);
+  background: #fff5f5;
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}

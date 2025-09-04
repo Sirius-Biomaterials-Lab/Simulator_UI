@@ -1,7 +1,6 @@
 import styles from "./ValueList.module.scss";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
-import React from "react";
 
 interface Item {
     name?: string;

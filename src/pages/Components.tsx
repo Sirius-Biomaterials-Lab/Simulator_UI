@@ -50,7 +50,7 @@ export function Components() {
         <>
             <h1>Компоненты</h1>
 
-            <Dropdown options={options} value={selected} onChange={setSelected} />
+            <Dropdown options={options} value={selected} onChange={setSelected} label={'Dropdown'}/>
             <p>Выбрано: {selected}</p>
 
 
