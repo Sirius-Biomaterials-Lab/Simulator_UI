@@ -1,5 +1,5 @@
 .container {
-  max-width: 1500px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -8,13 +8,10 @@
   margin-bottom: 20px;
 }
 .formRow {
+  width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  //label {
-  //  width: 160px;
-  //  font-weight: 500;
-  //}
 }
 .dropzone {
   border: 2px dashed #999;
@@ -38,12 +35,4 @@
 .error {
   color: #dc3545;
   margin-bottom: 12px;
-}
-
-.label {
-  display: inline-block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
 }

@@ -6,6 +6,7 @@ import {BurgerMenu, MenuItem} from "./components/BurgerMenu/BurgerMenu";
 import {Components} from "./pages/Components.tsx";
 import {Isotropic} from "./components/Isotropic/Isotropic.tsx";
 import {Anisotropic} from "./components/Anisotropic/Anisotropic.tsx";
+import {Cann} from "./components/Cann/Cann.tsx";
 
 export const menuItems: MenuItem[] = [
     { path: "/", label: "Главная" },
@@ -14,6 +15,7 @@ export const menuItems: MenuItem[] = [
         children: [
             { path: "/models/isotropic", label: "Изотропная" },
             { path: "/models/anisotropic", label: "Анизотропная" },
+            { path: "/models/cann", label: "Канн" },
         ],
     },
     { path: "/grid", label: "Сетка" },
@@ -32,6 +34,7 @@ function App() {
                     {/* Variant captured via URL param to reuse Models page */}
                     <Route path="/models/isotropic" element={<Isotropic />} />
                     <Route path="/models/anisotropic" element={<Anisotropic />} />
+                    <Route path="/models/cann" element={<Cann />} />
                     <Route path="/grid" element={<Grid />} />
                     <Route path="/simulator" element={<Simulator />} />
                     <Route path="/components" element={<Components />} />

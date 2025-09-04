@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "./Dropdown.module.scss";
 
 export interface Option {
@@ -9,17 +10,22 @@ interface DropdownProps {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
+    label: string;              // 🆕 label сверху
     disabled?: boolean;
+    className?: string;         // опционально для wrapper
 }
 
 export function Dropdown({
                              options,
                              value,
                              onChange,
+                             label,
                              disabled = false,
+                             className,
                          }: DropdownProps) {
     return (
-        <div className={styles.wrapper}>
+        <div className={[styles.wrapper, className ?? ""].join(" ").trim()}>
+            <label className={styles.label}>{label}</label>
             <select
                 className={styles.select}
                 value={value}

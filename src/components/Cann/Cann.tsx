@@ -1,15 +1,23 @@
 import { observer } from "mobx-react-lite";
 import React, {useCallback, useRef, useState} from "react";
-import styles from "./Isotropic.module.scss";
-import {isotropicStore, isotropicStore as store} from "../../store/isotropicStore";
+import styles from "./Cann.module.scss";
+import { isotropicStore as store } from "../../store/isotropicStore";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
 import {ValueList} from "../ValueList/ValueList.tsx";
+import {InputNumber} from "../InputNumber/InputNumber.tsx";
 
-export const Isotropic = observer(() => {
+type ActivationFunction = 'linear' | 'exp' | 'ln'
+
+export const Cann = observer(() => {
     // локальные флаги открытия диалогов
+    const [activationFunction, setActivationFunction] = useState<ActivationFunction[]>([]);
+    const [polynomialDegree, setPolynomialDegree] = useState<number>(1);
+    const [initAlpha, setInitAlpha] = useState<number>(0);  // от 0 до 1
+    const [epotchNumber, setEporchNumber] = useState<number>(0); // int
+    const [batchSize, setBatchSize] = useState<number>(16); // степень двойки
     const [fitOpen, setFitOpen] = useState(false);
     const [predictOpen, setPredictOpen] = useState(false);
     const [predictUploader, setPredictUploader] = useState(false);
@@ -21,13 +29,13 @@ export const Isotropic = observer(() => {
 
     // вариант модели и ошибки
     const modelOptions = [
-        { value: "NeoHookean", label: "Нео Хукин" },
-        { value: "MooneyRivlin", label: "Муни Ривлин" },
-        { value: "GeneralizedMooneyRivlin", label: "Общий Муни Ривлин" },
-        { value: "Beda", label: "Беда" },
-        { value: "Yeoh", label: "Yeoh" },
-        { value: "Gent", label: "Гент" },
-        { value: "Carroll", label: "Кэррол" },
+        { value: "isotropic", label: "Изотпропная" },
+        { value: "anisotrpic", label: "Анизотропная" },
+    ];
+    const activationFunctionOptions = [
+        { value: "linear", label: "Линейная" },
+        { value: "exp", label: "Экспоненциальная" },
+        { value: "ln", label: "Логарифмическая" },
     ];
 
 
@@ -86,15 +94,75 @@ export const Isotropic = observer(() => {
 
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Изотропная модель</h1>
+            <h1 className={styles.title}>Канн</h1>
 
             <div className={styles.formRow}>
                 {/*<label>Hyperlastic Model:</label>*/}
                 <Dropdown
-                    label={'Гиперэластичная модель'}
+                    label={'Тип модели'}
                     options={modelOptions}
                     value={store.hyperlastic_model}
                     onChange={(v) => store.setHyperlasticModel(v as any)}
+                />
+            </div>
+            <div className={styles.formRow}>
+                <Dropdown
+                    label={'Функция активации:'}
+                    options={activationFunctionOptions}
+                    value={activationFunction[0] || undefined}
+                    onChange={(v) => setActivationFunction(v as any)}
+                />
+            </div>
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={polynomialDegree}
+                    label={'Степень полинома'}
+                    onChange={(value: number | null) => {
+                        if (value !== null) {
+                            setPolynomialDegree(value)
+                        }
+                    }}
+                    numberType={'int'}
+                    validate={(value: number) => value >= 0}
+                />
+            </div>
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={initAlpha}
+                    label={'Альфа'}
+                    onChange={(value: number | null) => {
+                        if (value !== null) {
+                            setInitAlpha(value)
+                        }
+                    }}
+                    numberType={'float'}
+                    validate={(value: number) => value >= 0 && value <=1}
+                />
+            </div>
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={epotchNumber}
+                    label={'Количество эпох обучения'}
+                    onChange={(value: number | null) => {
+                        if (value !== null) {
+                            setEporchNumber(value)
+                        }
+                    }}
+                    numberType={'int'}
+                    validate={(value: number) => value >= 0}
+                />
+            </div>
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={batchSize}
+                    label={'Размер батча (степерь двойки)'}
+                    placeholder={'2, 4, 8, 16, ...'}
+                    onChange={(value: number | null) => {
+                        if (value !== null) {
+                            setBatchSize(value)
+                        }
+                    }}
+                    numberType={'int'}
                 />
             </div>
 
@@ -111,14 +179,17 @@ export const Isotropic = observer(() => {
                 className={styles.dropzone}
                 onDrop={onDropFit}
                 onDragOver={onDragOverFit}
-                onClick={()=>{selectFileFitRef.current?.click()}}
+                onClick={() => {
+                    selectFileFitRef.current?.click()
+                }}
             >
                 {store.fitFiles.length > 0 ? (
                     <span>Файлы: {store.fitFiles.map((f) => f.name).join(", ")}</span>
                 ) : (
                     <span>
             Перетащите файлы или{" нажмите сюда для выбора"}
-                        <input ref={selectFileFitRef} style={{display: "none"}} type="file" multiple onChange={onSelectFileFit} />
+                        <input ref={selectFileFitRef} style={{display: "none"}} type="file" multiple
+                               onChange={onSelectFileFit}/>
           </span>
                 )}
             </div>
@@ -133,7 +204,9 @@ export const Isotropic = observer(() => {
                 />
                 <Button
                     text="Predict"
-                    onClick={() => {setPredictUploader(true)}}
+                    onClick={() => {
+                        setPredictUploader(true)
+                    }}
                     disabled={store.loading || !store.fitPlotData}
                 />
             </div>
@@ -146,24 +219,24 @@ export const Isotropic = observer(() => {
                     title={'Загрузите файл'}
                 >
                     <>
-                    <div
-                        className={styles.dropzone}
-                        onDrop={onDropPredict}
-                        onDragOver={onDragOverPredict}
-                        onClick={() => {
-                            selectFilePredictRef.current?.click()
-                        }}
-                    >
-                        {store.predictFiles ? (
-                            <span>Файл: {store.predictFiles.name}</span>
-                        ) : (
-                            <span>
+                        <div
+                            className={styles.dropzone}
+                            onDrop={onDropPredict}
+                            onDragOver={onDragOverPredict}
+                            onClick={() => {
+                                selectFilePredictRef.current?.click()
+                            }}
+                        >
+                            {store.predictFiles ? (
+                                <span>Файл: {store.predictFiles.name}</span>
+                            ) : (
+                                <span>
             Перетащите файл или{"  нажмите сюда для выбора"}
-                                <input ref={selectFilePredictRef} style={{display: "none"}} type="file"
-                                       onChange={onSelectFilePredict}/>
+                                    <input ref={selectFilePredictRef} style={{display: "none"}} type="file"
+                                           onChange={onSelectFilePredict}/>
           </span>
-                        )}
-                    </div>
+                            )}
+                        </div>
                         <Button
                             onClick={() => {
                                 setPredictUploader(false)
@@ -190,19 +263,17 @@ export const Isotropic = observer(() => {
             )}
 
             {store.fitPlotData && (
-                <>
-                    <ValueList items={isotropicStore.fitParameters} title={'Параметры фиттирования'} tooltip={{content: 'test', link: 'https://artiebears.com'}}/>
-                    <Chart
-                        name={store.fitPlotData.name!}
-                        x_label={store.fitPlotData.x_label!}
-                        y_label={store.fitPlotData.y_label!}
-                                lines={store.fitPlotData.lines!.map((ln) => ({
-                                    name: ln.name!,
-                                    data: { x: ln.x!, y: ln.y! },
-                                }))}
-                    />
-                </>
-                    )}
+                <Chart
+                    name={store.fitPlotData.name!}
+                    x_label={store.fitPlotData.x_label!}
+                    y_label={store.fitPlotData.y_label!}
+                    lines={store.fitPlotData.lines!.map((ln) => ({
+                        name: ln.name!,
+                        data: {x: ln.x!, y: ln.y!},
+                    }))}
+                />
+            )}
+
 
             {/* Диалог с графиком Predict */}
             {predictOpen && (
@@ -211,24 +282,24 @@ export const Isotropic = observer(() => {
                     title="Predict Results"
                     onClose={() => setPredictOpen(false)}
                 >
-                    <ValueList items={store.fitMetrics} />
+                    <ValueList items={store.fitMetrics}/>
 
                 </Dialog>
             )}
 
-                   {store.predictPlotData && (
-                       <Chart
-                           name={store.predictPlotData.name!}
-                           x_label={store.predictPlotData.x_label!}
-                           y_label={store.predictPlotData.y_label!}
-                           lines={store.predictPlotData.lines!.map((ln) => ({
-                               name: ln.name!,
-                               data: { x: ln.x!, y: ln.y! },
-                           }))}
-                       />
-                   )}
+            {store.predictPlotData && (
+                <Chart
+                    name={store.predictPlotData.name!}
+                    x_label={store.predictPlotData.x_label!}
+                    y_label={store.predictPlotData.y_label!}
+                    lines={store.predictPlotData.lines!.map((ln) => ({
+                        name: ln.name!,
+                        data: {x: ln.x!, y: ln.y!},
+                    }))}
+                />
+            )}
             {store.predictPlotData && store.fitPlotData && (
-                <Button onClick={async () => await store.downloadEnergy()} text="Download" />
+                <Button onClick={async () => await store.downloadEnergy()} text="Download"/>
             )}
 
         </div>

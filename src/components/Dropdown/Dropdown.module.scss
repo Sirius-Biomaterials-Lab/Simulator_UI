@@ -1,15 +1,24 @@
-
+/* Dropdown.module.scss */
 .wrapper {
   position: relative;
-  max-width: 320px;         /*  stretch as needed  */
+  //max-width: 320px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
 }
 
 .select {
-  /* Basic look */
   width: 100%;
   padding: 10px 16px;
-  padding-right: 44px;      /* room for arrow   */
+  padding-right: 44px; /* место для стрелки */
   font-size: 16px;
   color: #333;
   background: #fafafa;
@@ -18,12 +27,10 @@
   outline: none;
   cursor: pointer;
 
-  /* Remove default arrow */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  /* Custom arrow */
   background-image: url("data:image/svg+xml,%3Csvg width='14' height='8' viewBox='0 0 14 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23999' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 16px center;

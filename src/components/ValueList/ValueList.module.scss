@@ -47,3 +47,45 @@
   font-size: 14px;
   color: #666;
 }
+.infoBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  color: #666;
+  cursor: pointer;
+  vertical-align: text-bottom;
+  transition: color 0.2s ease;
+}
+
+.infoBtn:hover {
+  color: #0066d1;
+}
+
+.tooltipBox {
+  max-width: 260px !important;
+  background: #fff !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  opacity: 1 !important;
+}
+
+.tooltipContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.tooltipLink {
+  font-size: 13px;
+  color: #0066d1;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+

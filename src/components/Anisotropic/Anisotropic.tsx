@@ -7,6 +7,7 @@ import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
 import {ValueList} from "../ValueList/ValueList.tsx";
+import {isotropicStore} from "../../store/isotropicStore.ts";
 
 export const Anisotropic = observer(() => {
     // локальные флаги открытия диалогов
@@ -93,8 +94,9 @@ export const Anisotropic = observer(() => {
             <h1 className={styles.title}>Анизотропная модель</h1>
 
             <div className={styles.formRow}>
-                <label>Hyperlastic Model:</label>
+                {/*<label className={styles.label}>Hyperlastic Model:</label>*/}
                 <Dropdown
+                    label={'Гиперэластичная модель'}
                     options={modelOptions}
                     value={store.hyperlastic_model}
                     onChange={(v) => store.setHyperlasticModel(v as any)}
@@ -185,6 +187,8 @@ export const Anisotropic = observer(() => {
             )}
 
             {store.fitPlotData && (
+                <>
+                <ValueList items={store.fitParameters} title={'Параметры фиттирования'}/>
 
                 <Chart
                     name={store.fitPlotData.name!}
@@ -195,6 +199,7 @@ export const Anisotropic = observer(() => {
                                 data: { x: ln.x!, y: ln.y! },
                             }))}
                         />
+                </>
                     )}
 
 
