@@ -20,7 +20,7 @@
 .item {
   display: flex;
   flex-wrap: wrap; /* <-- позволяем перенос строк */
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 8px;
   font-size: 16px;

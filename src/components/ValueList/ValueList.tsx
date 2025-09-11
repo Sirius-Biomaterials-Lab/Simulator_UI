@@ -4,7 +4,7 @@ import "react-tooltip/dist/react-tooltip.css";
 
 interface Item {
     name?: string;
-    value?: number | null;
+    value?: number | null | string[];
     dimension?: string;
 }
 
@@ -61,12 +61,26 @@ export function ValueList({ title, items, tooltip }: ValueListProps) {
                         )}
 
                         <span className={styles.separator}>:</span>
-                        <span className={styles.value}>
-              {item.value}
-                            {item.dimension && (
-                                <span className={styles.dimension}> {item.dimension}</span>
-                            )}
-            </span>
+                        {!Array.isArray(item.value) ? (
+                            <span className={styles.value}>
+                             {item.value}
+                                {item.dimension && (
+                                    <span className={styles.dimension}> {item.dimension}</span>
+                                )}
+                             </span>
+                        ) : (
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start'}}>
+                                {(item.value as Array<string>).map((_item, index) => (
+                                    <div className={styles.value} style={{display: 'block'}} key={index}>
+                                        {_item}
+                                    </div>
+                                ))}
+                                {item.dimension && (
+                                    <span className={styles.dimension}> {item.dimension}</span>
+                                )}
+                            </div>
+                        )}
+
                     </li>
                 ))}
             </ul>

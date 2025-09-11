@@ -10,6 +10,13 @@
  * ---------------------------------------------------------------
  */
 
+/** ActivationFunction */
+export enum ActivationFunction {
+  Linear = "linear",
+  Exp = "exp",
+  Ln = "ln",
+}
+
 /**
  * AnisotropicFitResponse
  * Response model for fit operation
@@ -187,6 +194,24 @@ export interface BodyUploadModelModulesAnisotropicUploadModelPost {
   files: File[];
 }
 
+/** Body_upload_model_modules_cann_upload_model_post */
+export interface BodyUploadModelModulesCannUploadModelPost {
+  /** Model Type */
+  model_type: "isotropic" | "anisotropic";
+  /** Activation Functions */
+  activation_functions: ActivationFunction[];
+  /** Files */
+  files: File[];
+  /** Polynomial Degree */
+  polynomial_degree: number;
+  /** Init Alpha */
+  init_alpha?: number | null;
+  /** Epochs */
+  epochs?: number | null;
+  /** Batch Size */
+  batch_size?: number | null;
+}
+
 /** Body_upload_model_modules_isotropic_upload_model_post */
 export interface BodyUploadModelModulesIsotropicUploadModelPost {
   /**
@@ -206,6 +231,107 @@ export interface BodyUploadModelModulesIsotropicUploadModelPost {
    * Model file (.csv, .xls, .xlsx)
    */
   files: File[];
+}
+
+/** CANNFitResponse */
+export interface CANNFitResponse {
+  /**
+   * Status
+   * Operation status
+   * @default "ok"
+   */
+  status?: string;
+  /**
+   * Parameters
+   * Optimized parameters
+   */
+  parameters: CANNParameterValue[];
+  /**
+   * Metrics
+   * Evaluation metrics
+   */
+  metrics: CANNMetric[];
+  /** Plot data */
+  plot_data: CANNPlotData;
+}
+
+/**
+ * CANNMetric
+ * Model for evaluation metrics
+ */
+export interface CANNMetric {
+  /**
+   * Name
+   * Metric name
+   */
+  name: string;
+  /**
+   * Value
+   * Metric value
+   */
+  value: number | null;
+}
+
+/**
+ * CANNParameterValue
+ * Model for optimized parameter values
+ */
+export interface CANNParameterValue {
+  /**
+   * Name
+   * Parameter name
+   */
+  name: string;
+  /**
+   * Value
+   * Parameter value
+   */
+  value: number;
+}
+
+/**
+ * CANNPlotData
+ * Model for plot data
+ */
+export interface CANNPlotData {
+  /**
+   * Title
+   * Plot title
+   */
+  title: string;
+  /**
+   * X Label
+   * X-axis label
+   */
+  x_label: string;
+  /**
+   * Y Label
+   * Y-axis label
+   */
+  y_label: string;
+  /**
+   * Lines
+   * Plot lines
+   */
+  lines: AnisotropicPlotLine[];
+}
+
+/**
+ * CANNResponse
+ * Standard response model for anisotropic operations
+ */
+export interface CANNResponse {
+  /**
+   * Status
+   * Operation status
+   * @default "error"
+   */
+  status?: string;
+  /**
+   * Detail
+   * Additional details or error message
+   */
+  detail?: string | null;
 }
 
 /** HTTPValidationError */
@@ -837,6 +963,76 @@ export class Api<
       this.request<void, HTTPValidationError>({
         path: `/modules/anisotropic/clear_data`,
         method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * @description Uploads model files (.csv) for CANN processing.
+     *
+     * @tags CANN
+     * @name UploadModelModulesCannUploadModelPost
+     * @summary Upload Model
+     * @request POST:/modules/cann/upload_model
+     */
+    uploadModelModulesCannUploadModelPost: (
+      data: BodyUploadModelModulesCannUploadModelPost,
+      params: RequestParams = {},
+    ) =>
+      this.request<CANNResponse, CANNResponse | HTTPValidationError>({
+        path: `/modules/cann/upload_model`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Fit anisotropic hyperelastic model to uploaded data
+     *
+     * @tags CANN
+     * @name FitModelModulesCannFitPost
+     * @summary Fit Model
+     * @request POST:/modules/cann/fit
+     */
+    fitModelModulesCannFitPost: (params: RequestParams = {}) =>
+      this.request<CANNResponse, CANNResponse | HTTPValidationError>({
+        path: `/modules/cann/fit`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CANN
+     * @name GetResultModulesCannGetResultPost
+     * @summary Get Result
+     * @request POST:/modules/cann/get-result
+     */
+    getResultModulesCannGetResultPost: (params: RequestParams = {}) =>
+      this.request<CANNFitResponse, CANNResponse | HTTPValidationError>({
+        path: `/modules/cann/get-result`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CANN
+     * @name CalculateEnergyModulesCannCalculateEnergyPost
+     * @summary Calculate Energy
+     * @request POST:/modules/cann/calculate_energy
+     */
+    calculateEnergyModulesCannCalculateEnergyPost: (
+      params: RequestParams = {},
+    ) =>
+      this.request<string, HTTPValidationError>({
+        path: `/modules/cann/calculate_energy`,
+        method: "POST",
         ...params,
       }),
   };

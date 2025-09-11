@@ -4,8 +4,8 @@ import styles from "./InputNumber.module.scss";
 type NumberType = "int" | "float";
 
 interface InputNumberComponentProps {
-    value: number | null;
-    onChange: (val: number | null) => void;
+    value: string | null;
+    onChange: (val: string | null) => void;
     numberType?: NumberType;
     placeholder?: string;
     className?: string;               // можно дополнительно переопределить
@@ -27,24 +27,19 @@ export const InputNumberComponent: React.FC<InputNumberComponentProps> = ({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let raw = e.target.value;
         let parsed: number | null = null;
-
+        console.log('test',raw)
         if (numberType === "int") {
             raw = raw.replace(/[^\d-]/g, "");
-            if (raw !== "" && !isNaN(Number(raw))) {
-                parsed = parseInt(raw, 10);
-            }
+            onChange(raw)
         } else {
+            console.log('here')
             raw = raw.replace(",", ".");
-            const floatVal = parseFloat(raw);
-            if (!isNaN(floatVal)) {
-                parsed = floatVal;
-            }
         }
 
         if (parsed !== null && validate && !validate(parsed)) {
             onChange(null);
         } else {
-            onChange(parsed);
+            onChange(raw);
         }
     };
 

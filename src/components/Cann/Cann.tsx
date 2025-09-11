@@ -1,36 +1,32 @@
 import { observer } from "mobx-react-lite";
 import React, {useCallback, useRef, useState} from "react";
 import styles from "./Cann.module.scss";
-import { isotropicStore as store } from "../../store/isotropicStore";
+import { cannStore as store } from "../../store/cannStore";
 import { Dropdown } from "../Dropdown/Dropdown";
 import { Button } from "../Button/Button";
 import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
 import {ValueList} from "../ValueList/ValueList.tsx";
 import {InputNumber} from "../InputNumber/InputNumber.tsx";
+import {ActivationFunction} from "../../api/api.ts";
 
-type ActivationFunction = 'linear' | 'exp' | 'ln'
 
 export const Cann = observer(() => {
     // локальные флаги открытия диалогов
-    const [activationFunction, setActivationFunction] = useState<ActivationFunction[]>([]);
-    const [polynomialDegree, setPolynomialDegree] = useState<number>(1);
-    const [initAlpha, setInitAlpha] = useState<number>(0);  // от 0 до 1
-    const [epotchNumber, setEporchNumber] = useState<number>(0); // int
-    const [batchSize, setBatchSize] = useState<number>(16); // степень двойки
+
+
+
+    const [initAlpha, setInitAlpha] = useState<string | null>(String(store.initAlpha));
     const [fitOpen, setFitOpen] = useState(false);
     const [predictOpen, setPredictOpen] = useState(false);
-    const [predictUploader, setPredictUploader] = useState(false);
 
     const selectFileFitRef = useRef<HTMLInputElement>(null);
-    const selectFilePredictRef = useRef<HTMLInputElement>(null);
-    // api.auth.loginCookieAuthLoginCookiePost({})
 
 
     // вариант модели и ошибки
     const modelOptions = [
         { value: "isotropic", label: "Изотпропная" },
-        { value: "anisotrpic", label: "Анизотропная" },
+        { value: "anisotropic", label: "Анизотропная" },
     ];
     const activationFunctionOptions = [
         { value: "linear", label: "Линейная" },
@@ -52,30 +48,31 @@ export const Cann = observer(() => {
         const files = e.target.files ? Array.from(e.target.files) : [];
         if (files.length) store.setFitFiles(files);
     }, []);
-
-
-    const onDropPredict = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-
-        const file = e.dataTransfer.files?.[0]; // берём только первый
-        if (file) {
-            store.setPredictFile(file);
-            e.dataTransfer.clearData();           // по желанию: очищаем буфер
-        }
-    }, [store]);
-
-    const onDragOverPredict = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    }, []);
-
-// выбор файла через <input type="file">
-    const onSelectFilePredict = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]; // берём только первый
-        if (file) {
-            store.setPredictFile(file);
-            e.target.value = '';            // по желанию: сбрасываем input
-        }
-    }, [store]);
+//
+//
+//     const onDropPredict = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+//         e.preventDefault();
+//
+//         const file = e.dataTransfer.files?.[0]; // берём только первый
+//         if (file) {
+//             store.setPredictFile(file);
+//             e.dataTransfer.clearData();           // по желанию: очищаем буфер
+//         }
+//     }, [store]);
+//
+//     const onDragOverPredict = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+//         e.preventDefault();
+//     }, []);
+//
+// // выбор файла через <input type="file">
+//     const onSelectFilePredict = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+//         const file = e.target.files?.[0]; // берём только первый
+//         if (file) {
+//             store.setPredictFile(file);
+//             e.target.value = '';            // по желанию: сбрасываем input
+//         }
+//     }, [store]);
+    console.log(store)
 
     // Функция Fit + открытие диалога
     const handleFit = async () => {
@@ -85,12 +82,12 @@ export const Cann = observer(() => {
         }
     };
     // Функция Predict + открытие диалога
-    const handlePredict = async () => {
-        await store.predict();
-        if (!store.error) {
-            setPredictOpen(true);
-        }
-    };
+    // const handlePredict = async () => {
+    //     await store.predict();
+    //     if (!store.error) {
+    //         setPredictOpen(true);
+    //     }
+    // };
 
     return (
         <div className={styles.container}>
@@ -101,51 +98,53 @@ export const Cann = observer(() => {
                 <Dropdown
                     label={'Тип модели'}
                     options={modelOptions}
-                    value={store.hyperlastic_model}
-                    onChange={(v) => store.setHyperlasticModel(v as any)}
+                    value={store.modelType}
+                    onChange={(v) => store.setModelType(v as any)}
                 />
             </div>
             <div className={styles.formRow}>
                 <Dropdown
                     label={'Функция активации:'}
                     options={activationFunctionOptions}
-                    value={activationFunction[0] || undefined}
-                    onChange={(v) => setActivationFunction(v as any)}
+                    value={store.activationFunctions[0] || undefined}
+                    onChange={(v) => store.setActivationFunctions([v as ActivationFunction])}
                 />
             </div>
             <div className={styles.formRow}>
                 <InputNumber
-                    value={polynomialDegree}
+                    value={String(store.polynomialDegree)}
                     label={'Степень полинома'}
-                    onChange={(value: number | null) => {
+                    onChange={(value: string | null) => {
                         if (value !== null) {
-                            setPolynomialDegree(value)
+                            store.setPolynomialDegree(value)
                         }
                     }}
                     numberType={'int'}
-                    validate={(value: number) => value >= 0}
+                    // validate={(value: number) => value >= 0}
                 />
             </div>
             <div className={styles.formRow}>
                 <InputNumber
                     value={initAlpha}
                     label={'Альфа'}
-                    onChange={(value: number | null) => {
-                        if (value !== null) {
-                            setInitAlpha(value)
-                        }
+                    onChange={(value: string | null) => {
+                        console.log('onChange', value);
+                        setInitAlpha(value)
+                        if (value?.endsWith('.')) return
+
+                        store.setInitAlpha(value)
                     }}
-                    numberType={'float'}
-                    validate={(value: number) => value >= 0 && value <=1}
+                    // numberType={'float'}
+                    // validate={(value: number) => value >= 0 && value <=1}
                 />
             </div>
             <div className={styles.formRow}>
                 <InputNumber
-                    value={epotchNumber}
+                    value={String(store.eporchs)}
                     label={'Количество эпох обучения'}
-                    onChange={(value: number | null) => {
+                    onChange={(value: string | null) => {
                         if (value !== null) {
-                            setEporchNumber(value)
+                            store.setEporchs(value)
                         }
                     }}
                     numberType={'int'}
@@ -154,12 +153,12 @@ export const Cann = observer(() => {
             </div>
             <div className={styles.formRow}>
                 <InputNumber
-                    value={batchSize}
+                    value={String(store.batchSize)}
                     label={'Размер батча (степерь двойки)'}
                     placeholder={'2, 4, 8, 16, ...'}
-                    onChange={(value: number | null) => {
+                    onChange={(value: string | null) => {
                         if (value !== null) {
-                            setBatchSize(value)
+                            store.setBatchSize(value)
                         }
                     }}
                     numberType={'int'}
@@ -202,53 +201,53 @@ export const Cann = observer(() => {
                     onClick={handleFit}
                     disabled={!store.fitFiles.length || store.loading}
                 />
-                <Button
-                    text="Predict"
-                    onClick={() => {
-                        setPredictUploader(true)
-                    }}
-                    disabled={store.loading || !store.fitPlotData}
-                />
+                {/*<Button*/}
+                {/*    text="Predict"*/}
+                {/*    onClick={() => {*/}
+                {/*        setPredictUploader(true)*/}
+                {/*    }}*/}
+                {/*    disabled={store.loading || !store.fitPlotData}*/}
+                {/*/>*/}
             </div>
 
             {store.loading && <div className={styles.loading}>Загрузка...</div>}
 
-            {predictUploader && (
-                <Dialog
-                    onClose={() => setPredictUploader(false)}
-                    title={'Загрузите файл'}
-                >
-                    <>
-                        <div
-                            className={styles.dropzone}
-                            onDrop={onDropPredict}
-                            onDragOver={onDragOverPredict}
-                            onClick={() => {
-                                selectFilePredictRef.current?.click()
-                            }}
-                        >
-                            {store.predictFiles ? (
-                                <span>Файл: {store.predictFiles.name}</span>
-                            ) : (
-                                <span>
-            Перетащите файл или{"  нажмите сюда для выбора"}
-                                    <input ref={selectFilePredictRef} style={{display: "none"}} type="file"
-                                           onChange={onSelectFilePredict}/>
-          </span>
-                            )}
-                        </div>
-                        <Button
-                            onClick={() => {
-                                setPredictUploader(false)
-                                handlePredict().then()
-                            }}
-                        >
-                            Predict
-                        </Button>
-                    </>
-                </Dialog>
+          {/*  {predictUploader && (*/}
+          {/*      <Dialog*/}
+          {/*          onClose={() => setPredictUploader(false)}*/}
+          {/*          title={'Загрузите файл'}*/}
+          {/*      >*/}
+          {/*          <>*/}
+          {/*              <div*/}
+          {/*                  className={styles.dropzone}*/}
+          {/*                  onDrop={onDropPredict}*/}
+          {/*                  onDragOver={onDragOverPredict}*/}
+          {/*                  onClick={() => {*/}
+          {/*                      selectFilePredictRef.current?.click()*/}
+          {/*                  }}*/}
+          {/*              >*/}
+          {/*                  {store.predictFiles ? (*/}
+          {/*                      <span>Файл: {store.predictFiles.name}</span>*/}
+          {/*                  ) : (*/}
+          {/*                      <span>*/}
+          {/*  Перетащите файл или{"  нажмите сюда для выбора"}*/}
+          {/*                          <input ref={selectFilePredictRef} style={{display: "none"}} type="file"*/}
+          {/*                                 onChange={onSelectFilePredict}/>*/}
+          {/*</span>*/}
+          {/*                  )}*/}
+          {/*              </div>*/}
+          {/*              <Button*/}
+          {/*                  onClick={() => {*/}
+          {/*                      setPredictUploader(false)*/}
+          {/*                      handlePredict().then()*/}
+          {/*                  }}*/}
+          {/*              >*/}
+          {/*                  Predict*/}
+          {/*              </Button>*/}
+          {/*          </>*/}
+          {/*      </Dialog>*/}
 
-            )}
+          {/*  )}*/}
 
             {/* Диалог с графиком Fit */}
             {fitOpen && (
@@ -263,15 +262,18 @@ export const Cann = observer(() => {
             )}
 
             {store.fitPlotData && (
-                <Chart
-                    name={store.fitPlotData.name!}
-                    x_label={store.fitPlotData.x_label!}
-                    y_label={store.fitPlotData.y_label!}
-                    lines={store.fitPlotData.lines!.map((ln) => ({
-                        name: ln.name!,
-                        data: {x: ln.x!, y: ln.y!},
-                    }))}
-                />
+                <>
+                    <ValueList items={store.fitParameters} title={'Параметры фиттирования'} tooltip={{content: 'test', link: 'https://artiebears.com'}}/>
+                    <Chart
+                        name={store.fitPlotData.name!}
+                        x_label={store.fitPlotData.x_label!}
+                        y_label={store.fitPlotData.y_label!}
+                        lines={store.fitPlotData.lines!.map((ln) => ({
+                            name: ln.name!,
+                            data: {x: ln.x!, y: ln.y!},
+                        }))}
+                    />
+                </>
             )}
 
 
@@ -298,7 +300,7 @@ export const Cann = observer(() => {
                     }))}
                 />
             )}
-            {store.predictPlotData && store.fitPlotData && (
+            {store.fitPlotData && (
                 <Button onClick={async () => await store.downloadEnergy()} text="Download"/>
             )}
 
