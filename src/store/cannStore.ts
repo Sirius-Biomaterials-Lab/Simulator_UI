@@ -173,50 +173,7 @@ export class CannStore {
         }
     }
 
-    async downloadEnergy() {
-        // если уже идёт другая операция, можно выйти — по желанию
-        // if (this.loading) return;
 
-        this.loading = true;
-        this.error = null;
-
-        try {
-            // 1. Запрашиваем строку энергии
-            // const resp   = await api.modules.calculateEnergyModulesIsotropicCalculateEnergyGet();
-            const resp   = await fetch(
-                `${api.baseUrl}/modules/cann/calculate_energy`,
-                // `${api.baseUrl}/metrics`,
-                // `${api.baseUrl}/modules/isotropic/clear_data`,
-                { method: "POST", credentials: "include" }
-            );
-            // console.log(await resp.text());
-            const energy = await resp.text();               // тип — string
-
-            // 2. Формируем файл
-            const blob = new Blob([energy], {
-                type: "text/plain;charset=utf-8",
-            });
-            const url = URL.createObjectURL(blob);
-
-            // 3. Триггерим скачивание
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "isotrop.energy";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-        } catch (e: any) {
-            runInAction(() => {
-                this.error =
-                    e?.message || e?.error?.detail || "Не удалось скачать файл энергии.";
-            });
-        } finally {
-            runInAction(() => {
-                this.loading = false;
-            });
-        }
-    }
 
     async downloadEnergy() {
         // если уже идёт другая операция, можно выйти — по желанию
