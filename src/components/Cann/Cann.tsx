@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import styles from "./Cann.module.scss";
 import { cannStore as store } from "../../store/cannStore";
 import { Dropdown } from "../Dropdown/Dropdown";
@@ -8,8 +8,7 @@ import { Chart } from "../Chart/Chart";
 import { Dialog } from "../Dialog/Dialog";
 import {ValueList} from "../ValueList/ValueList.tsx";
 import {InputNumber} from "../InputNumber/InputNumber.tsx";
-import {ActivationFunction} from "../../api/api.ts";
-
+import {Checkbox, CheckboxValue} from "../CheckBox/CheckBox.tsx";
 
 export const Cann = observer(() => {
     // локальные флаги открытия диалогов
@@ -22,13 +21,15 @@ export const Cann = observer(() => {
 
     const selectFileFitRef = useRef<HTMLInputElement>(null);
 
+    const [activationFunctions, setActivationFunctions] = useState<CheckboxValue[]>([]);
+
 
     // вариант модели и ошибки
     const modelOptions = [
         { value: "isotropic", label: "Изотпропная" },
         { value: "anisotropic", label: "Анизотропная" },
     ];
-    const activationFunctionOptions = [
+    const activationFunctionOptions: CheckboxValue[] = [
         { value: "linear", label: "Линейная" },
         { value: "exp", label: "Экспоненциальная" },
         { value: "ln", label: "Логарифмическая" },
@@ -81,6 +82,10 @@ export const Cann = observer(() => {
             setFitOpen(true);
         }
     };
+
+    useEffect(() => {
+        store.setActivationFunctions(activationFunctions.map((val) => val.value))
+    }, [activationFunctions])
     // Функция Predict + открытие диалога
     // const handlePredict = async () => {
     //     await store.predict();
@@ -103,12 +108,19 @@ export const Cann = observer(() => {
                 />
             </div>
             <div className={styles.formRow}>
-                <Dropdown
-                    label={'Функция активации:'}
+                {/*<Dropdown*/}
+                {/*    label={'Функция активации:'}*/}
+                {/*    options={activationFunctionOptions}*/}
+                {/*    value={store.activationFunctions[0] || undefined}*/}
+                {/*    onChange={(v) => store.setActivationFunctions([v as ActivationFunction])}*/}
+                {/*/>*/}
+                <Checkbox
+                    label={'Функция активации'}
+                    values={activationFunctions}
+                    onChange={(v) => setActivationFunctions(v)}
                     options={activationFunctionOptions}
-                    value={store.activationFunctions[0] || undefined}
-                    onChange={(v) => store.setActivationFunctions([v as ActivationFunction])}
                 />
+
             </div>
             <div className={styles.formRow}>
                 <InputNumber
@@ -264,15 +276,18 @@ export const Cann = observer(() => {
             {store.fitPlotData && (
                 <>
                     <ValueList items={store.fitParameters} title={'Параметры фиттирования'} tooltip={{content: 'test', link: 'https://artiebears.com'}}/>
-                    <Chart
-                        name={store.fitPlotData.name!}
-                        x_label={store.fitPlotData.x_label!}
-                        y_label={store.fitPlotData.y_label!}
-                        lines={store.fitPlotData.lines!.map((ln) => ({
-                            name: ln.name!,
-                            data: {x: ln.x!, y: ln.y!},
-                        }))}
-                    />
+                    {store.fitPlotData.map((chart) => (
+                        <Chart
+                            name={chart.name!}
+                            x_label={chart.x_label!}
+                            y_label={chart.y_label!}
+                            lines={chart.lines!.map((ln) => ({
+                                name: ln.name!,
+                                data: {x: ln.x!, y: ln.y!},
+                            }))}
+                        />
+                    ))}
+
                 </>
             )}
 
@@ -303,6 +318,7 @@ export const Cann = observer(() => {
             {store.fitPlotData && (
                 <Button onClick={async () => await store.downloadEnergy()} text="Download"/>
             )}
+            <Button onClick={async () => await store.reset()} text={'Очистить'} variant={'warning'}/>
 
         </div>
     );

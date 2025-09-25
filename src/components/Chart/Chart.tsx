@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
     LineChart,
     Line,
@@ -7,10 +8,9 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import { useEffect, useRef, useState } from "react";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import styles from "./Chart.module.scss";
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
 interface ChartProps {
     name: string;
@@ -25,25 +25,47 @@ interface ChartProps {
     }[];
 }
 
+type LegendPos = { x: number; y: number };
+
 export function Chart({ name, x_label, y_label, lines }: ChartProps) {
-    // ==== Подготовка данных ====
+    // ==== Полноэкранный режим ====
     const [fullscreen, setFullscreen] = useState(false);
-    const chartData: Record<string, number>[] = [];
-    const maxLength = Math.max(...lines.map((l) => l.data.x.length));
-    for (let i = 0; i < maxLength; i++) {
-        const point: Record<string, number> = {};
-        point["x"] = lines[0].data.x[i];
-        lines.forEach((line) => {
-            point[line.name] = line.data.y[i];
-        });
-        chartData.push(point);
+
+    // ==== Подготовка данных ====
+    // Строим объединённый набор точек по всем сериям
+    // Ключ — X; значения — объект { x, [seriesName]: y }
+    const map = new Map<number, Record<string, number | undefined>>();
+
+    for (const line of lines) {
+        const xs = line.data.x;
+        const ys = line.data.y;
+        const len = Math.min(xs.length, ys.length);
+
+        for (let i = 0; i < len; i++) {
+            const x = xs[i];
+            const y = ys[i];
+            if (x == null || y == null) continue;
+
+            if (!map.has(x)) map.set(x, { x });
+            const row = map.get(x)!;
+            row[line.name] = y;
+        }
     }
 
-    // ==== Состояние позиции легенды ====
+    const chartData: Array<Record<string, number | undefined>> = Array.from(
+        map.values()
+    ).sort((a, b) => (a.x as number) - (b.x as number));
+
+    // ==== Состояние позиции легенды (drag + сохранение) ====
     const STORAGE_KEY = `legendPos-${name}`;
-    const [legendPos, setLegendPos] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : { x: 20, y: 20 };
+    const [legendPos, setLegendPos] = useState<LegendPos>(() => {
+        try {
+            const saved =
+                typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+            return saved ? JSON.parse(saved) : { x: 20, y: 20 };
+        } catch {
+            return { x: 20, y: 20 };
+        }
     });
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -91,9 +113,11 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
         const relX = clampedX - containerRect.left;
         const relY = clampedY - containerRect.top;
 
-        const newPos = { x: relX, y: relY };
+        const newPos: LegendPos = { x: relX, y: relY };
         setLegendPos(newPos);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newPos));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newPos));
+        } catch {}
     };
 
     const handleMouseUp = () => {
@@ -107,28 +131,30 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // При смене размеров (в т.ч. фуллскрин) не даём легенде «выпасть» за границы
     useEffect(() => {
         const container = containerRef.current;
-        const legend    = legendRef.current;
+        const legend = legendRef.current;
         if (!container || !legend) return;
 
         const { width: cw, height: ch } = container.getBoundingClientRect();
-        const { width: lw,  height: lh } = legend.getBoundingClientRect();
+        const { width: lw, height: lh } = legend.getBoundingClientRect();
 
-        // если выходим за пределы — сдвигаем
         const newX = Math.min(legendPos.x, cw - lw);
         const newY = Math.min(legendPos.y, ch - lh);
         if (newX !== legendPos.x || newY !== legendPos.y) {
-            const pos = { x: Math.max(0, newX), y: Math.max(0, newY) };
+            const pos: LegendPos = { x: Math.max(0, newX), y: Math.max(0, newY) };
             setLegendPos(pos);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+            } catch {}
         }
-    }, [fullscreen, legendPos.x, legendPos.y]);       // ← срабатывает при смене режима
+    }, [fullscreen, legendPos.x, legendPos.y]);
 
-
-    // ==== Формируем данные легенды ====
+    // ==== Данные легенды ====
     const legendData = lines.map((line, index) => ({
         value: line.name,
         color: `hsl(${(index * 60) % 360}, 70%, 50%)`,
@@ -136,7 +162,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
         id: line.name,
     }));
 
-    // ==== Custom Legend ====
+    // ==== Кастомная легенда ====
     const CustomLegend = () => (
         <div
             ref={legendRef}
@@ -176,23 +202,34 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
         </div>
     );
 
-    // ==== Render ====
+    // ==== Рендер ====
     return (
         <div
             className={!fullscreen ? styles.container : styles.fullScreenContainer}
             ref={containerRef}
-            style={{ overflow: "visible" }}
+            style={{ overflow: "visible", position: "relative" }}
         >
-            <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>
-            <h2 className={styles.title}>{name}</h2>
-                <button className={styles.fullScreenButton} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <CloseFullscreenIcon /> : <OpenInFullIcon />}</button>
+            <div
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            >
+                <h2 className={styles.title}>{name}</h2>
+                <button
+                    className={styles.fullScreenButton}
+                    onClick={() => setFullscreen((v) => !v)}
+                    aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                >
+                    {fullscreen ? <CloseFullscreenIcon /> : <OpenInFullIcon />}
+                </button>
             </div>
 
-            <ResponsiveContainer width="100%" height={fullscreen? '100%':500}>
-                <LineChart data={chartData}>
+            <ResponsiveContainer width="100%" height={fullscreen ? "100%" : 500}>
+                <LineChart data={chartData as any}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis
+                        type="number"
                         dataKey="x"
+                        domain={['dataMin', 'dataMax']}
+                        allowDuplicatedCategory={false}
                         label={{ value: x_label, position: "insideBottom", offset: -5 }}
                     />
                     <YAxis
@@ -206,13 +243,15 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                             dataKey={line.name}
                             stroke={legendData[index].color}
                             dot={false}
+                            connectNulls
+                            isAnimationActive={false}
                         />
                     ))}
                 </LineChart>
             </ResponsiveContainer>
-            {/* Легенда (рядышком поверх графика) */}
-            <CustomLegend />
 
+            {/* Перетаскиваемая легенда поверх графика */}
+            <CustomLegend />
         </div>
     );
 }

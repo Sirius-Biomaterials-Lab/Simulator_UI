@@ -182,7 +182,8 @@ export class AnisotropicStore {
         }
     }
 
-    reset() {
+    async reset() {
+        await api.modules.clearAllDataModulesAnisotropicClearDataDelete({credentials: "include"});
         this.hyperlastic_model = "GOH";
         this.fitFile = null;
         this.fitPlotData = null;
@@ -190,6 +191,7 @@ export class AnisotropicStore {
         this.fitMetrics = null;
         this.predictMetrics = null;
         this.error = null;
+
     }
 }
 

@@ -230,6 +230,7 @@ export const Isotropic = observer(() => {
             {store.predictPlotData && store.fitPlotData && (
                 <Button onClick={async () => await store.downloadEnergy()} text="Download" />
             )}
+            <Button onClick={async () => store.reset()} text={'Очистить'} variant={'warning'}/>
 
         </div>
     );

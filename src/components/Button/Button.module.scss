@@ -36,6 +36,20 @@
   }
 }
 
+.warning {
+  background-color: red;
+  color: white;
+
+  &:hover {
+    background-color: rgba(255, 0, 100);
+  }
+
+  &:disabled {
+    background-color: #c8cbcf;
+    cursor: not-allowed;
+  }
+}
+
 /* Активное состояние */
 .active {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);

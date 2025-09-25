@@ -26,11 +26,12 @@ export class CannStore {
     predictFiles?: File = undefined;
 
     /* ───────── responses ───────── */
-    fitPlotData: PlotData | null = null;
+    fitPlotData: PlotData[] | null = null;
     predictPlotData: PlotData | null = null;
     fitMetrics: Metric[] | null = null;
     fitParameters: Parameter[] | null = null;
     predictMetrics: AnisotropicMetric[] | null = null;
+    correlationId: string ='';
 
     /* ───────── state ───────── */
     loading = false;
@@ -77,7 +78,7 @@ export class CannStore {
 
     async responseFitParams(): Promise<{ ok: boolean; ready: boolean; status?: string | null }> {
         try {
-            const fit = await api.modules.getResultModulesCannGetResultPost({ credentials: "include" });
+            const fit = await api.modules.getResultModulesCannGetResultPost({correlation_id: this.correlationId},{ credentials: "include" });
 
             runInAction(() => {
                 this.fitPlotData   = fit?.data?.plot_data   ?? null;
@@ -148,7 +149,8 @@ export class CannStore {
 
 
             /* 3. Фитим модель через клиент (возвращает {status, parameters, metrics, plot_data}) */
-            await api.modules.fitModelModulesCannFitPost({credentials: "include"});
+            const res = await api.modules.fitModelModulesCannFitPost({credentials: "include"});
+            this.correlationId = res.data.correlation_id
             const finalStatus = await this.pollFitResultEvery10s(10); // ждём до ~10 минут
 
             if (finalStatus === "failed") throw new Error("Модель завершилась с ошибкой (status=failed).");
@@ -211,7 +213,9 @@ export class CannStore {
         }
     }
 
-    reset() {
+    async reset() {
+        await api.modules.clearAllDataModulesCannClearDataDelete({credentials: "include"});
+
         this.modelType = "isotropic";
         this.activationFunctions = []
         this.initAlpha = null

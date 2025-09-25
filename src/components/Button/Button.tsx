@@ -6,7 +6,7 @@ interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     active?: boolean;
-    variant?: "primary" | "secondary";
+    variant?: "primary" | "secondary" | 'warning';
 }
 
 export function Button({

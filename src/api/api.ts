@@ -199,7 +199,7 @@ export interface BodyUploadModelModulesCannUploadModelPost {
   /** Model Type */
   model_type: "isotropic" | "anisotropic";
   /** Activation Functions */
-  activation_functions: ActivationFunction[];
+  activation_functions: string | string[];
   /** Files */
   files: File[];
   /** Polynomial Degree */
@@ -233,8 +233,28 @@ export interface BodyUploadModelModulesIsotropicUploadModelPost {
   files: File[];
 }
 
-/** CANNFitResponse */
+/**
+ * CANNFitResponse
+ * Standard response model for anisotropic operations
+ */
 export interface CANNFitResponse {
+  /**
+   * Status
+   * Operation status
+   * @default "error"
+   */
+  status?: string;
+  /** Correlation Id */
+  correlation_id: string;
+  /**
+   * Detail
+   * Additional details or error message
+   */
+  detail?: string | null;
+}
+
+/** CANNGetResultResponse */
+export interface CANNGetResultResponse {
   /**
    * Status
    * Operation status
@@ -251,8 +271,11 @@ export interface CANNFitResponse {
    * Evaluation metrics
    */
   metrics: CANNMetric[];
-  /** Plot data */
-  plot_data: CANNPlotData;
+  /**
+   * Plot Data
+   * Plot data
+   */
+  plot_data: CANNPlotData[];
 }
 
 /**
@@ -313,7 +336,29 @@ export interface CANNPlotData {
    * Lines
    * Plot lines
    */
-  lines: AnisotropicPlotLine[];
+  lines: CANNPlotLine[];
+}
+
+/**
+ * CANNPlotLine
+ * Model for plot line data
+ */
+export interface CANNPlotLine {
+  /**
+   * Name
+   * Line name
+   */
+  name: string;
+  /**
+   * X
+   * X coordinates
+   */
+  x: number[];
+  /**
+   * Y
+   * Y coordinates
+   */
+  y: number[];
 }
 
 /**
@@ -996,7 +1041,7 @@ export class Api<
      * @request POST:/modules/cann/fit
      */
     fitModelModulesCannFitPost: (params: RequestParams = {}) =>
-      this.request<CANNResponse, CANNResponse | HTTPValidationError>({
+      this.request<CANNFitResponse, CANNFitResponse | HTTPValidationError>({
         path: `/modules/cann/fit`,
         method: "POST",
         format: "json",
@@ -1011,10 +1056,20 @@ export class Api<
      * @summary Get Result
      * @request POST:/modules/cann/get-result
      */
-    getResultModulesCannGetResultPost: (params: RequestParams = {}) =>
-      this.request<CANNFitResponse, CANNResponse | HTTPValidationError>({
+    getResultModulesCannGetResultPost: (
+      query: {
+        /** Correlation Id */
+        correlation_id: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        CANNGetResultResponse,
+        CANNGetResultResponse | HTTPValidationError
+      >({
         path: `/modules/cann/get-result`,
         method: "POST",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -1030,9 +1085,24 @@ export class Api<
     calculateEnergyModulesCannCalculateEnergyPost: (
       params: RequestParams = {},
     ) =>
-      this.request<string, HTTPValidationError>({
+      this.request<string, CANNResponse | HTTPValidationError>({
         path: `/modules/cann/calculate_energy`,
         method: "POST",
+        ...params,
+      }),
+
+    /**
+     * @description Clears all uploaded data and fitted models for the session.
+     *
+     * @tags CANN
+     * @name ClearAllDataModulesCannClearDataDelete
+     * @summary Clear All Data
+     * @request DELETE:/modules/cann/clear_data
+     */
+    clearAllDataModulesCannClearDataDelete: (params: RequestParams = {}) =>
+      this.request<void, HTTPValidationError>({
+        path: `/modules/cann/clear_data`,
+        method: "DELETE",
         ...params,
       }),
   };

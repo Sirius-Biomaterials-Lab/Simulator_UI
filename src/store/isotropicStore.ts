@@ -179,7 +179,8 @@ export class IsotropicStore {
         }
     }
 
-    reset() {
+    async reset() {
+        await api.modules.deleteItemModulesIsotropicClearDataDelete({credentials: "include"});
         this.hyperlastic_model = "MooneyRivlin";
         // this.error_function = "Absolute error in σ";
         this.fitFiles = [];
