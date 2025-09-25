@@ -10,13 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-/** ActivationFunction */
-export enum ActivationFunction {
-  Linear = "linear",
-  Exp = "exp",
-  Ln = "ln",
-}
-
 /**
  * AnisotropicFitResponse
  * Response model for fit operation
@@ -318,10 +311,10 @@ export interface CANNParameterValue {
  */
 export interface CANNPlotData {
   /**
-   * Title
+   * Name
    * Plot title
    */
-  title: string;
+  name: string;
   /**
    * X Label
    * X-axis label

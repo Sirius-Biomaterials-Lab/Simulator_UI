@@ -222,7 +222,8 @@ export const Cann = observer(() => {
                 {/*/>*/}
             </div>
 
-            {store.loading && <div className={styles.loading}>Загрузка...</div>}
+            {/*{store.loading && <div className={styles.loading}>Загрузка...</div>}*/}
+            {store.loading && <div className={styles.loading}><img src={'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWgyN25wdnNqM2pucnprNjkxbDFua3N5ZjV1bmJieDllNXozYjhsdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Ju7l5y9osyymQ/giphy.gif'} /></div>}
 
           {/*  {predictUploader && (*/}
           {/*      <Dialog*/}

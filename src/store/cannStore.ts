@@ -2,10 +2,15 @@ import { makeAutoObservable, runInAction } from "mobx";
 import {
     BodyUploadModelModulesCannUploadModelPost,
     PlotData,
-    AnisotropicMetric, Metric, Parameter, ActivationFunction         // ← метрики из сгенерённого клиента
+    AnisotropicMetric, Metric, Parameter         // ← метрики из сгенерённого клиента
 } from "../api/api";
 import {api} from "../api/apiWrapper.ts";
 
+export enum ActivationFunction {
+    Linear = "linear",
+    Exp = "exp",
+    Ln = "ln",
+}
 
 export type CannModelType =
     BodyUploadModelModulesCannUploadModelPost["model_type"];
@@ -213,12 +218,57 @@ export class CannStore {
         }
     }
 
+    async downloadEnergy() {
+        // если уже идёт другая операция, можно выйти — по желанию
+        // if (this.loading) return;
+
+        this.loading = true;
+        this.error = null;
+
+        try {
+            // 1. Запрашиваем строку энергии
+            // const resp   = await api.modules.calculateEnergyModulesIsotropicCalculateEnergyGet();
+            // const resp   = await fetch(
+            //     `${api.baseUrl}/modules/anisotropic/calculate_energy`,
+            //     // `${api.baseUrl}/modules/isotropic/clear_data`,
+            //     { method: "POST", credentials: "include" }
+            // );
+
+            const resp = await api.modules.calculateEnergyModulesCannCalculateEnergyPost({credentials: 'include'})
+            const energy = await resp.text();               // тип — string
+
+            // 2. Формируем файл
+            const blob = new Blob([energy], {
+                type: "text/plain;charset=utf-8",
+            });
+            const url = URL.createObjectURL(blob);
+
+            // 3. Триггерим скачивание
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "isotrop.energy";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (e: any) {
+            runInAction(() => {
+                this.error =
+                    e?.message || e?.error?.detail || "Не удалось скачать файл энергии.";
+            });
+        } finally {
+            runInAction(() => {
+                this.loading = false;
+            });
+        }
+    }
+
     async reset() {
         await api.modules.clearAllDataModulesCannClearDataDelete({credentials: "include"});
 
         this.modelType = "isotropic";
         this.activationFunctions = []
-        this.initAlpha = null
+        this.initAlpha = 0.5
         this.eporchs = 1000
         this.batchSize = 8
         // this.error_function = "Absolute error in σ";
