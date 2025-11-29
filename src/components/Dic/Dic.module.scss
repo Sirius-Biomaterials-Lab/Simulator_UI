@@ -1,0 +1,117 @@
+.container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.uploaderLabel{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dropzone {
+  border: 2px dashed #999;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  //margin-bottom: 20px;
+  margin: 20px auto;
+  justify-content: center;
+}
+
+.loading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.error {
+  color: #dc3545;
+  margin-bottom: 12px;
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Drag & Drop Field */
+.dragDropField {
+  border: 2px dashed #999;
+  padding: 25px;
+  border-radius: 10px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.dragOver {
+  border-color: #ff9800;
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.extensions {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.inputButtons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.uploadedList {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.uploadRow {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.column {
+  flex: 1;
+}
+
+.resultsGrid{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.formRow {
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  margin: 6px auto;
+}
+

@@ -1,0 +1,100 @@
+/* Основная зона импорта */
+.dragDropField {
+    border: 2px dashed #999;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 28px 18px;
+    text-align: center;
+    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
+}
+
+.dragDropField:hover {
+    background-color: #fff;
+    border-color: #666;
+}
+
+.dragOver {
+    border-color: #0066d1 !important;
+    background-color: #f2f8ff;
+    box-shadow: 0 0 0 4px rgba(0, 102, 209, 0.25);
+}
+
+/* Текстовые подсказки */
+.extensions {
+    margin-top: 8px;
+    font-size: 10px;
+    color: #777;
+}
+
+/* Кнопки выбора файлов */
+.inputButtons {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* Error text */
+.error {
+    color: #dc3545;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* Список загруженных файлов */
+.uploadedList {
+    margin-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Мини карточка файла */
+.fileItem {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(109, 116, 123, 0.15);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(180, 180, 180, 0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.fileItem:hover {
+    transform: scale(1.03);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+.fileItemWrong {
+    background-color: rgba(241, 40, 40, 0.2) !important;
+    border-color: rgba(255,0,0,0.4);
+}
+
+/* Кнопка удаления файла */
+.removeBtn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 18px;
+    height: 18px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.65);
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.removeBtn:hover {
+    opacity: 1;
+}
+
+.removeBtn:active {
+    transform: scale(0.9);
+}

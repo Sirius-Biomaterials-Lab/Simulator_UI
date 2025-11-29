@@ -156,6 +156,23 @@ export interface AnisotropicResponse {
   detail?: string | null;
 }
 
+/** Body_analyze_series_modules_dic_dic_analyze_series_post */
+export interface BodyAnalyzeSeriesModulesDicDicAnalyzeSeriesPost {
+  /** Type Curve */
+  type_curve: "q4" | "spline";
+  /** Deg E */
+  deg_e: number;
+  /** Deg N */
+  deg_n: number;
+  /**
+   * Reference
+   * @format binary
+   */
+  reference: File;
+  /** Deformed */
+  deformed: File[];
+}
+
 /** Body_predict_model_modules_anisotropic_predict_post */
 export interface BodyPredictModelModulesAnisotropicPredictPost {
   /**
@@ -359,6 +376,24 @@ export interface CANNPlotLine {
  * Standard response model for anisotropic operations
  */
 export interface CANNResponse {
+  /**
+   * Status
+   * Operation status
+   * @default "error"
+   */
+  status?: string;
+  /**
+   * Detail
+   * Additional details or error message
+   */
+  detail?: string | null;
+}
+
+/**
+ * DICResponse
+ * Standard response model for anisotropic operations
+ */
+export interface DICResponse {
   /**
    * Status
    * Operation status
@@ -1096,6 +1131,59 @@ export class Api<
       this.request<void, HTTPValidationError>({
         path: `/modules/cann/clear_data`,
         method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * @description Uploads model files (.tif) for DIC processing.
+     *
+     * @tags DIC
+     * @name AnalyzeSeriesModulesDicDicAnalyzeSeriesPost
+     * @summary Analyze Series
+     * @request POST:/modules/dic/dic/analyze-series
+     */
+    analyzeSeriesModulesDicDicAnalyzeSeriesPost: (
+      data: BodyAnalyzeSeriesModulesDicDicAnalyzeSeriesPost,
+      params: RequestParams = {},
+    ) =>
+      this.request<DICResponse, HTTPValidationError>({
+        path: `/modules/dic/dic/analyze-series`,
+        method: "POST",
+        body: data,
+        type: ContentType.FormData,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description GET endpoint который возвращает CSV файл с рандомными данными.
+     *
+     * @tags DIC
+     * @name DownloadCsvModulesDicGetCsvPost
+     * @summary Download Csv
+     * @request POST:/modules/dic/get-csv
+     */
+    downloadCsvModulesDicGetCsvPost: (params: RequestParams = {}) =>
+      this.request<any, HTTPValidationError>({
+        path: `/modules/dic/get-csv`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get result image DIC
+     *
+     * @tags DIC
+     * @name GetGeneratedImagesModulesDicGetImagesPost
+     * @summary Get Generated Images
+     * @request POST:/modules/dic/get-images
+     */
+    getGeneratedImagesModulesDicGetImagesPost: (params: RequestParams = {}) =>
+      this.request<any, HTTPValidationError>({
+        path: `/modules/dic/get-images`,
+        method: "POST",
+        format: "json",
         ...params,
       }),
   };

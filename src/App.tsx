@@ -7,6 +7,7 @@ import {Components} from "./pages/Components.tsx";
 import {Isotropic} from "./components/Isotropic/Isotropic.tsx";
 import {Anisotropic} from "./components/Anisotropic/Anisotropic.tsx";
 import {Cann} from "./components/Cann/Cann.tsx";
+import {Dic} from "./components/Dic/Dic.tsx";
 
 export const menuItems: MenuItem[] = [
     { path: "/", label: "Главная" },
@@ -18,6 +19,7 @@ export const menuItems: MenuItem[] = [
             { path: "/models/cann", label: "Канн" },
         ],
     },
+    { path: "/dic", label: "Dic" },
     { path: "/grid", label: "Сетка" },
     { path: "/simulator", label: "Симулятор" },
     { path: "/components", label: "Компоненты (for devs)" },
@@ -38,6 +40,7 @@ function App() {
                     <Route path="/grid" element={<Grid />} />
                     <Route path="/simulator" element={<Simulator />} />
                     <Route path="/components" element={<Components />} />
+                    <Route path="/dic" element={<Dic />} />
                 </Routes>
             </div>
         </BrowserRouter>
