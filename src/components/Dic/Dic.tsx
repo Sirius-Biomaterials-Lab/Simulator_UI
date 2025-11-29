@@ -147,6 +147,7 @@ export const Dic: React.FC = observer(() => {
                             key={i}
                             src={`data:image/png;base64,${img.base64_data}`}
                             downloadName={`generated_${i}.png`}
+                            description={img.title}
                         />
                     )
                 )}

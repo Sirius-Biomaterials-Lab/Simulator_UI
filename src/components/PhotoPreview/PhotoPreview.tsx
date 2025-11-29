@@ -6,9 +6,10 @@ type PhotoPreviewProps = {
     file?: File | null;
     src?: string;
     downloadName?: string;
+    description?: string;
 };
 
-export default function PhotoPreview({ file, src, downloadName = "image" }: PhotoPreviewProps) {
+export default function PhotoPreview({ file, src, downloadName = "image", description }: PhotoPreviewProps) {
     const [preview, setPreview] = useState("");
 
     useEffect(() => {
@@ -28,12 +29,18 @@ export default function PhotoPreview({ file, src, downloadName = "image" }: Phot
     if (!preview) return null;
 
     return (
+        <div style={{display: 'flex', flexDirection: 'column'}}>
         <div className={styles.card}>
-            <a className={styles.downloadBtn} href={preview} download={downloadName}>
+            <a className={styles.downloadBtn} href={preview} download={description}>
                 <DownloadIcon />
             </a>
 
             <img src={preview} alt={downloadName} className={styles.img} />
+
+        </div>
+            {description && (
+                <p style={{alignSelf: 'center'}}>{description}</p>
+            )}
         </div>
     );
 }

@@ -14,6 +14,7 @@ export type TCurveType = "q4" | "spline";
 
 export type TGeneratedImage = {
     base64_data: string;
+    title: string;
 };
 
 export type TFiles = {
