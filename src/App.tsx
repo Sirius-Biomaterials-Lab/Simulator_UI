@@ -19,7 +19,7 @@ export const menuItems: MenuItem[] = [
             { path: "/models/cann", label: "Канн" },
         ],
     },
-    { path: "/dic", label: "ЦКИ" },
+    { path: "/dic", label: "DIC" },
     { path: "/grid", label: "Сетка" },
     { path: "/simulator", label: "Симулятор" },
     { path: "/components", label: "Компоненты (for devs)" },
