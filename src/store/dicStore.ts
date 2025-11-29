@@ -1,15 +1,35 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { api } from "../api/apiWrapper";
 
-export const TypeCurveOptions = [
-    { value: 'q4', label: 'Полином 4 степени'},
-    { value: 'spline', label: 'Сплайн'},
-]
+/*───────────────────────────────*/
+/*             TYPES             */
+/*───────────────────────────────*/
 
-type TCurveType = 'q4' | 'spline';
+export const TypeCurveOptions = [
+    { value: "q4", label: "Полином 4 степени" },
+    { value: "spline", label: "Сплайн" },
+];
+
+export type TCurveType = "q4" | "spline";
+
+export type TGeneratedImage = {
+    base64_data: string;
+};
+
+export type TFiles = {
+    reference: File | null;
+    deformed: File[];
+    type_curve: TCurveType;
+    deg_e: number;
+    deg_n: number;
+};
+
+/*───────────────────────────────*/
+/*            STORE              */
+/*───────────────────────────────*/
 
 export class DicStore {
-    files = {
+    files: TFiles = {
         reference: null,
         deformed: [],
         type_curve: "q4",
@@ -17,18 +37,19 @@ export class DicStore {
         deg_n: 3,
     };
 
-    generatedImages = [];
-    loading = false;
-    error = null;
-    uploadSuccess = false;
+    generatedImages: TGeneratedImage[] = [];
+    loading: boolean = false;
+    error: string | null = null;
+    uploadSuccess: boolean = false;
 
     constructor() {
         makeAutoObservable(this);
     }
 
     /*───────────────────────────────*/
-    /*         SETTERS               */
+    /*           SETTERS             */
     /*───────────────────────────────*/
+
     setTypeCurve(typeCurve: TCurveType) {
         this.files.type_curve = typeCurve;
     }
@@ -41,32 +62,32 @@ export class DicStore {
         this.files.deg_n = degN;
     }
 
-    setReference(file) {
+    setReference(file: File) {
         this.files.reference = file;
     }
 
-    setDeformed(files) {
+    setDeformed(files: File[]) {
         this.files.deformed = files;
     }
 
-    setParams({ type_curve, deg_e, deg_n }) {
-        if (type_curve) this.files.type_curve = type_curve;
-        if (deg_e !== undefined) this.files.deg_e = deg_e;
-        if (deg_n !== undefined) this.files.deg_n = deg_n;
+    setParams(params: Partial<Pick<TFiles, "type_curve" | "deg_e" | "deg_n">>) {
+        if (params.type_curve !== undefined) this.files.type_curve = params.type_curve;
+        if (params.deg_e !== undefined) this.files.deg_e = params.deg_e;
+        if (params.deg_n !== undefined) this.files.deg_n = params.deg_n;
     }
 
-    setLoading(b) {
+    setLoading(b: boolean) {
         this.loading = b;
     }
 
-    setError(msg) {
+    setError(msg: string | null) {
         this.error = msg;
     }
 
     /*───────────────────────────────*/
-    /*       API: UPLOAD FILES       */
+    /*        API: UPLOAD FILES      */
     /*───────────────────────────────*/
-    async uploadFiles() {
+    async uploadFiles(): Promise<Response | undefined> {
         this.setLoading(true);
         this.setError(null);
 
@@ -76,22 +97,25 @@ export class DicStore {
             formData.append("type_curve", this.files.type_curve);
             formData.append("deg_e", this.files.deg_e.toString());
             formData.append("deg_n", this.files.deg_n.toString());
-            formData.append("reference", this.files.reference);
+
+            if (this.files.reference) {
+                formData.append("reference", this.files.reference);
+            }
 
             this.files.deformed.forEach((f) => {
                 formData.append("deformed", f);
             });
 
-            // const response = await api.modules.analyzeSeriesModulesDicDicAnalyzeSeriesPost(formData, {});
             const response = await fetch(
                 `${api.baseUrl}/modules/dic/dic/analyze-series`,
-                { method: "POST", body: formData, credentials: "include" }
+                {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include",
+                }
             );
-            console.log("analyze-series response:", response);
-            this.uploadSuccess = true;
 
-            // Логики нет — ручка просто запускает процесс,
-            // а затем надо отдельно получать изображения.
+            this.uploadSuccess = true;
             return response;
         } catch (err) {
             console.error("uploadFiles error:", err);
@@ -102,20 +126,20 @@ export class DicStore {
     }
 
     /*───────────────────────────────*/
-    /*    API: GET GENERATED IMAGES   */
+    /*   API: GET GENERATED IMAGES   */
     /*───────────────────────────────*/
     async downloadImages() {
         this.setLoading(true);
         this.setError(null);
 
         try {
-            const response = await api.modules.getGeneratedImagesModulesDicGetImagesPost({credentials: 'include'});
-
-            runInAction(() => {
-                this.generatedImages = response.data.images || [];
+            const response = await api.modules.getGeneratedImagesModulesDicGetImagesPost({
+                credentials: "include",
             });
 
-            console.log("get-images response:", response);
+            runInAction(() => {
+                this.generatedImages = (response.data?.images ?? []) as TGeneratedImage[];
+            });
 
             return response;
         } catch (err) {
@@ -126,32 +150,32 @@ export class DicStore {
         }
     }
 
+    /*───────────────────────────────*/
+    /*        DOWNLOAD CSV           */
+    /*───────────────────────────────*/
     async downloadCsvData() {
-        // если уже идёт другая операция, можно выйти — по желанию
-        // if (this.loading) return;
-
         this.setLoading(true);
         this.setError(null);
 
         try {
-            // 1. Запрашиваем строку энергии
-            // const resp   = await api.modules.calculateEnergyModulesIsotropicCalculateEnergyGet();
-            const resp   = await api.modules.downloadCsvModulesDicGetCsvPost({credentials: 'include'});
-            const energy = await resp.text();               // тип — string
+            const resp = await api.modules.downloadCsvModulesDicGetCsvPost({
+                credentials: "include",
+            });
 
-            // 2. Формируем файл
+            const energy = await resp.text();
+
             const blob = new Blob([energy], {
                 type: "text/plain;charset=utf-8",
             });
             const url = URL.createObjectURL(blob);
 
-            // 3. Триггерим скачивание
             const a = document.createElement("a");
             a.href = url;
             a.download = "result.csv";
             document.body.appendChild(a);
             a.click();
             a.remove();
+
             URL.revokeObjectURL(url);
         } catch (e: any) {
             runInAction(() => {
@@ -160,7 +184,7 @@ export class DicStore {
             });
         } finally {
             runInAction(() => {
-                this.setLoading(false)
+                this.setLoading(false);
             });
         }
     }

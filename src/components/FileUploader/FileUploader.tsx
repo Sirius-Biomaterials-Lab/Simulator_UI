@@ -2,46 +2,62 @@ import React, { useRef, useState } from "react";
 import styles from "./FileUploader.module.scss";
 import PhotoMiniature from "../PhotoMiniature/PhotoMiniature";
 
+/*──────────────────────────*/
+/*       Типы данных        */
+/*──────────────────────────*/
+export type TUploadedFile = {
+    file: File;
+};
+
+export type FileUploaderMode = "single" | "multiple";
+
+export interface FileUploaderProps {
+    mode?: FileUploaderMode;
+    files?: TUploadedFile[];
+    onChange?: (files: TUploadedFile[]) => void;
+    onError?: (msg: string) => void;
+    accept?: string[]; // MIME-тип: ["image/jpeg", "image/png"]
+}
+
 export default function FileUploader({
                                          mode = "multiple",
                                          files = [],
                                          onChange,
                                          onError,
                                          accept = ["image/jpeg", "image/png"]
-                                     }) {
-    const [internalError, setInternalError] = useState("");
-    const fileInputRef = useRef(null);
+                                     }: FileUploaderProps) {
+    const [internalError, setInternalError] = useState<string>("");
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const showError = (msg) => {
+    const showError = (msg: string) => {
         setInternalError(msg);
-        onError && onError(msg);
+        if (onError) onError(msg);
     };
 
     /*──────────────────────────*/
     /*     Drag & Drop          */
     /*──────────────────────────*/
-    const handleDragOver = (e) => {
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         e.currentTarget.classList.add(styles.dragOver);
     };
 
-    const handleDragLeave = (e) => {
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         e.currentTarget.classList.remove(styles.dragOver);
     };
 
-    const handleDrop = (e) => {
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         e.currentTarget.classList.remove(styles.dragOver);
 
         const dropped = Array.from(e.dataTransfer.files);
 
-        const selected = dropped.map((file) => ({
+        const selected: TUploadedFile[] = dropped.map((file) => ({
             file,
-            camera: "root"
         }));
 
         handleFiles(selected);
@@ -51,24 +67,24 @@ export default function FileUploader({
     /*──────────────────────────*/
     /*       File Change        */
     /*──────────────────────────*/
-    const handleFileChange = (e) => {
-        const selected = Array.from(e.target.files).map((file) => ({
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const list = e.target.files ? Array.from(e.target.files) : [];
+        const selected: TUploadedFile[] = list.map((file) => ({
             file,
-            camera: "root"
         }));
 
         handleFiles(selected);
-        e.target.value = null;
+        e.target.value = "";
     };
 
-    const checkFormat = (file) => accept.includes(file.type);
+    const checkFormat = (file: File) => accept.includes(file.type);
 
-    const handleFiles = (selectedFiles) => {
-        const valid = [];
-        const invalid = [];
+    const handleFiles = (selectedFiles: TUploadedFile[]) => {
+        const valid: TUploadedFile[] = [];
+        const invalid: string[] = [];
 
-        selectedFiles.forEach(({ file, camera }) => {
-            if (checkFormat(file)) valid.push({ file, camera });
+        selectedFiles.forEach(({ file }) => {
+            if (checkFormat(file)) valid.push({ file });
             else invalid.push(file.name);
         });
 
@@ -80,19 +96,23 @@ export default function FileUploader({
             setInternalError("");
         }
 
-        if (!valid.length) return;
+        if (valid.length === 0) return;
 
-        let newFiles;
-        if (mode === "single") newFiles = [valid[0]];
-        else newFiles = [...files, ...valid];
+        let newFiles: TUploadedFile[];
 
-        onChange && onChange(newFiles);
+        if (mode === "single") {
+            newFiles = [valid[0]];
+        } else {
+            newFiles = [...files, ...valid];
+        }
+
+        if (onChange) onChange(newFiles);
     };
 
-    const deleteFile = (index) => {
+    const deleteFile = (index: number) => {
         const updated = [...files];
         updated.splice(index, 1);
-        onChange && onChange(updated);
+        if (onChange) onChange(updated);
     };
 
     return (

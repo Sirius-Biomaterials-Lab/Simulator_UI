@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./PhotoMiniature.module.scss";
 
-const SUPPORTED_TYPES = [
+const SUPPORTED_TYPES: string[] = [
     "image/jpeg",
     "image/png",
-    "image/webp",
-    "image/gif",
-    "image/bmp"
 ];
 
-export default function PhotoMiniature({ file, onRemove }) {
-    const [preview, setPreview] = useState(null);
+interface PhotoMiniatureProps {
+    file: File;
+    onRemove: () => void;
+}
+
+export default function PhotoMiniature({ file, onRemove }: PhotoMiniatureProps) {
+    const [preview, setPreview] = useState<string | null>(null);
     const isSupported = SUPPORTED_TYPES.includes(file.type);
 
     useEffect(() => {
@@ -32,7 +34,6 @@ export default function PhotoMiniature({ file, onRemove }) {
             ) : (
                 <div className={styles.placeholder}>
                     <span>{file.name}</span>
-                    {/*<small>Неподдерживаемый формат</small>*/}
                 </div>
             )}
 

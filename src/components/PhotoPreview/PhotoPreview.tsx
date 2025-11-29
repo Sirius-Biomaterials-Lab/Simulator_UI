@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./PhotoPreview.module.scss";
 import DownloadIcon from '@mui/icons-material/Download';
 
