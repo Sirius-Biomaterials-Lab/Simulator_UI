@@ -33,7 +33,7 @@ export const Dic: React.FC = observer(() => {
     // @ts-ignore
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>DIC Анализ</h1>
+            <h1 className={styles.title}>Цифровая корреляция изображений</h1>
 
             {/* Тип кривой */}
             <div className={styles.formRow}>
