@@ -23,6 +23,16 @@ export type TFiles = {
     type_curve: TCurveType;
     deg_e: number;
     deg_n: number;
+    corners: {
+        left: {
+            x: number;
+            y: number;
+        },
+        right: {
+            x: number;
+            y: number;
+        }
+    }
 };
 
 /*───────────────────────────────*/
@@ -36,6 +46,16 @@ export class DicStore {
         type_curve: "q4",
         deg_e: 3,
         deg_n: 3,
+        corners: {
+            left: {
+                x: 0,
+                y: 0,
+            },
+            right: {
+                x: 0,
+                y: 0,
+            }
+        }
     };
 
     generatedImages: TGeneratedImage[] = [];
@@ -61,6 +81,10 @@ export class DicStore {
 
     setDegN(degN: number) {
         this.files.deg_n = degN;
+    }
+
+    setCorners(corners: TFiles['corners']) {
+        this.files.corners = corners;
     }
 
     setReference(file: File) {
@@ -98,6 +122,10 @@ export class DicStore {
             formData.append("type_curve", this.files.type_curve);
             formData.append("deg_e", this.files.deg_e.toString());
             formData.append("deg_n", this.files.deg_n.toString());
+            formData.append("left_x", this.files.corners.left.x.toString());
+            formData.append("left_y", this.files.corners.left.y.toString());
+            formData.append("right_x", this.files.corners.right.x.toString());
+            formData.append("right_y", this.files.corners.right.y.toString());
 
             if (this.files.reference) {
                 formData.append("reference", this.files.reference);

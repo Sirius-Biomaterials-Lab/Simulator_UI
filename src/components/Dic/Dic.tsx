@@ -73,6 +73,83 @@ export const Dic: React.FC = observer(() => {
                 />
             </div>
 
+            <div className={styles.formRow}>
+                <h2>Координаты сетки</h2>
+            </div>
+            <div className={styles.formRow}>
+                <h4>Левый нижний угол</h4>
+            </div>
+
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={String(store.files.corners.left.x)}
+                    label="Координата x"
+                    placeholder="Показатель степени"
+                    numberType="int"
+                    onChange={(value: string | null) => {
+                        if (value !== null) store.setCorners({
+                            ...store.files.corners,
+                            left: {
+                                ...store.files.corners.left,
+                                x: Number(value),
+                            }
+                        });
+                    }}
+                />
+                <InputNumber
+                    value={String(store.files.corners.left.y)}
+                    label="Координата y"
+                    placeholder="Показатель степени"
+                    numberType="int"
+                    onChange={(value: string | null) => {
+                        if (value !== null) store.setCorners({
+                            ...store.files.corners,
+                            left: {
+                                ...store.files.corners.left,
+                                y: Number(value),
+                            }
+                        });
+                    }}
+                />
+            </div>
+
+            <div className={styles.formRow}>
+                <h4>Правый верхний угол</h4>
+            </div>
+
+            <div className={styles.formRow}>
+                <InputNumber
+                    value={String(store.files.corners.right.x)}
+                    label="Координата x"
+                    placeholder="Показатель степени"
+                    numberType="int"
+                    onChange={(value: string | null) => {
+                        if (value !== null) store.setCorners({
+                            ...store.files.corners,
+                            right: {
+                                ...store.files.corners.right,
+                                x: Number(value),
+                            }
+                        });
+                    }}
+                />
+                <InputNumber
+                    value={String(store.files.corners.right.y)}
+                    label="Координата y"
+                    placeholder="Показатель степени"
+                    numberType="int"
+                    onChange={(value: string | null) => {
+                        if (value !== null) store.setCorners({
+                            ...store.files.corners,
+                            right: {
+                                ...store.files.corners.right,
+                                y: Number(value),
+                            }
+                        });
+                    }}
+                />
+            </div>
+
             {/* Reference */}
             <div className={styles.uploadRow}>
                 <div className={styles.column}>
@@ -81,7 +158,7 @@ export const Dic: React.FC = observer(() => {
                         mode="single"
                         files={
                             store.files.reference
-                                ? [{ file: store.files.reference }]
+                                ? [{file: store.files.reference}]
                                 : []
                         }
                         onChange={(arr) => {
@@ -96,7 +173,7 @@ export const Dic: React.FC = observer(() => {
                     <h3 className={styles.uploaderLabel}>Деформации (до 30 изображений)</h3>
                     <FileUploader
                         mode="multiple"
-                        files={store.files.deformed.map((file) => ({ file }))}
+                        files={store.files.deformed.map((file) => ({file}))}
                         onChange={(arr) => {
                             store.setDeformed(arr.map((x) => x.file));
                         }}
