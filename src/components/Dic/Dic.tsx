@@ -51,8 +51,8 @@ export const Dic: React.FC = observer(() => {
             <div className={styles.formRow}>
                 <InputNumber
                     value={String(store.files.deg_e)}
-                    label="Степень E"
-                    placeholder="2, 4, 8, 16..."
+                    label="Степень полинома в направлении y"
+                    placeholder="Показатель степени"
                     numberType="int"
                     onChange={(value: string | null) => {
                         if (value !== null) store.setDegE(Number(value));
@@ -64,8 +64,8 @@ export const Dic: React.FC = observer(() => {
             <div className={styles.formRow}>
                 <InputNumber
                     value={String(store.files.deg_n)}
-                    label="Степень N"
-                    placeholder="2, 4, 8, 16..."
+                    label="Степень полинома в направлении x"
+                    placeholder="Показатель степени"
                     numberType="int"
                     onChange={(value: string | null) => {
                         if (value !== null) store.setDegN(Number(value));
