@@ -38,7 +38,7 @@ export const Dic: React.FC = observer(() => {
             {/* Тип кривой */}
             <div className={styles.formRow}>
                 <Dropdown
-                    label="Тип кривой"
+                    label="Модель метода конечных элементов"
                     options={TypeCurveOptions}
                     value={store.files.type_curve}
                     onChange={(value: string) => {
