@@ -239,7 +239,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                     {lines.map((line, index) => (
                         <Line
                             key={line.name}
-                            type="monotone"
+                            type="linear"
                             dataKey={line.name}
                             stroke={legendData[index].color}
                             dot={false}
