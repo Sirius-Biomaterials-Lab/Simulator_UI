@@ -241,6 +241,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                             key={line.name}
                             type="linear"
                             dataKey={line.name}
+                            stroke={'none'}
                             dot={{ r: 4, stroke: legendData[index].color, fill: legendData[index].color }}
                             connectNulls
                             isAnimationActive={false}
