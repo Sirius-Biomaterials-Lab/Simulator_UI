@@ -236,13 +236,12 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                         label={{ value: y_label, angle: -90, position: "insideLeft", offset: 10 }}
                     />
                     <Tooltip />
-                    {lines.map((line) => (
+                    {lines.map((line, index) => (
                         <Line
                             key={line.name}
                             type="linear"
                             dataKey={line.name}
-                            stroke={"none"}
-                            dot={{ r: 4 }} 
+                            dot={{ r: 4, stroke: legendData[index].color, fill: legendData[index].color }}
                             connectNulls
                             isAnimationActive={false}
                         />
