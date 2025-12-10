@@ -139,7 +139,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
         const container = containerRef.current;
         const legend = legendRef.current;
         if (!container || !legend) return;
-
+        //stroke={legendData[index].color}
         const { width: cw, height: ch } = container.getBoundingClientRect();
         const { width: lw, height: lh } = legend.getBoundingClientRect();
 
@@ -241,8 +241,8 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                             key={line.name}
                             type="linear"
                             dataKey={line.name}
-                            stroke={legendData[index].color}
-                            dot={false}
+                            stroke={"none"}
+                            dot={{ r: 4 }} 
                             connectNulls
                             isAnimationActive={false}
                         />
