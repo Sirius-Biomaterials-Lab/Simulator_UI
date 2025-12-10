@@ -236,7 +236,7 @@ export function Chart({ name, x_label, y_label, lines }: ChartProps) {
                         label={{ value: y_label, angle: -90, position: "insideLeft", offset: 10 }}
                     />
                     <Tooltip />
-                    {lines.map((line, index) => (
+                    {lines.map((line) => (
                         <Line
                             key={line.name}
                             type="linear"
